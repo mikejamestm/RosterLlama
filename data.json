@@ -20,14 +20,32 @@
   ],
   "programs": [
     {
-      "id": "prog_summer",
+      "id": "prog_bay",
       "organization_id": "org_demo",
-      "name": "Summer Adventure Camp",
+      "name": "Bay Explorers",
       "type": "camp",
-      "description": "Ages 6–12",
-      "price": 47500,
+      "category": "School Closure Camps",
+      "description": "Everyday adventures for ages 6–12",
+      "price": 9500,
       "waitlist_mode": "automatic",
+      "age_min": 6,
+      "age_max": 12,
+      "allow_multiple_children": true,
       "questions": [
+        {
+          "id": "q_bday",
+          "label": "Child birthday",
+          "type": "date",
+          "required": true,
+          "system_key": "birthday"
+        },
+        {
+          "id": "q_booster",
+          "label": "Booster seat needed",
+          "type": "yesno",
+          "required": true,
+          "system_key": "booster"
+        },
         {
           "id": "q_allergies",
           "label": "Allergies / medical notes",
@@ -35,24 +53,671 @@
           "required": false,
           "system_key": "allergies"
         }
+      ],
+      "addons": [
+        {
+          "name": "AM Extended Care",
+          "period": "am",
+          "start_time": "07:30",
+          "end_time": "09:00",
+          "price": 1800
+        },
+        {
+          "name": "PM Extended Care",
+          "period": "pm",
+          "start_time": "16:00",
+          "end_time": "17:30",
+          "price": 1800
+        }
       ]
+    },
+    {
+      "id": "prog_kinder",
+      "organization_id": "org_demo",
+      "name": "Kinder Camp",
+      "type": "camp",
+      "category": "School Closure Camps",
+      "description": "Camp for ages 4–6",
+      "price": 8500,
+      "waitlist_mode": "automatic",
+      "age_min": 4,
+      "age_max": 6,
+      "allow_multiple_children": true,
+      "questions": [
+        {
+          "id": "q_kb",
+          "label": "Child birthday",
+          "type": "date",
+          "required": true,
+          "system_key": "birthday"
+        },
+        {
+          "id": "q_ka",
+          "label": "Allergies / medical notes",
+          "type": "textarea",
+          "required": false,
+          "system_key": "allergies"
+        }
+      ],
+      "addons": []
+    },
+    {
+      "id": "prog_flip",
+      "organization_id": "org_demo",
+      "name": "Flip Academy",
+      "type": "gymnastics",
+      "category": "Afterschool Programs",
+      "description": "After-school gymnastics",
+      "price": 12000,
+      "waitlist_mode": "manual",
+      "age_min": 5,
+      "age_max": 11,
+      "allow_multiple_children": true,
+      "questions": [
+        {
+          "id": "q_fe",
+          "label": "Emergency contacts",
+          "type": "textarea",
+          "required": true,
+          "system_key": "emergency_contacts"
+        }
+      ],
+      "addons": []
     }
   ],
   "sessions": [
     {
-      "id": "sess_june",
-      "program_id": "prog_summer",
-      "label": "June 8–12",
-      "capacity": 24,
-      "start_date": "2027-06-08",
-      "end_date": "2027-06-12",
-      "price": 47500,
+      "id": "sess_oct9",
+      "program_id": "prog_bay",
+      "label": "October 9",
+      "capacity": 8,
+      "start_date": "2026-10-09",
+      "end_date": "2026-10-09",
+      "start_time": "09:00",
+      "end_time": "16:00",
+      "price": 9500,
+      "status": "open"
+    },
+    {
+      "id": "sess_oct12",
+      "program_id": "prog_bay",
+      "label": "October 12",
+      "capacity": 8,
+      "start_date": "2026-10-12",
+      "end_date": "2026-10-12",
+      "start_time": "09:00",
+      "end_time": "16:00",
+      "price": 9500,
+      "status": "open"
+    },
+    {
+      "id": "sess_nov23",
+      "program_id": "prog_bay",
+      "label": "November 23",
+      "capacity": 8,
+      "start_date": "2026-11-23",
+      "end_date": "2026-11-23",
+      "start_time": "09:00",
+      "end_time": "16:00",
+      "price": 9500,
+      "status": "open"
+    },
+    {
+      "id": "sess_kinder9",
+      "program_id": "prog_kinder",
+      "label": "October 9",
+      "capacity": 8,
+      "start_date": "2026-10-09",
+      "end_date": "2026-10-09",
+      "start_time": "09:00",
+      "end_time": "16:00",
+      "price": 8500,
+      "status": "open"
+    },
+    {
+      "id": "sess_flipwed",
+      "program_id": "prog_flip",
+      "label": "Wednesday Gymnastics",
+      "capacity": 10,
+      "start_date": "2026-10-07",
+      "end_date": "2026-12-16",
+      "start_time": "14:30",
+      "end_time": "16:10",
+      "price": 12000,
       "status": "open"
     }
   ],
-  "families": [],
-  "participants": [],
-  "registrations": [],
+  "families": [
+    {
+      "id": "fam_demo_1",
+      "name": "Demo Parent 1",
+      "email": "demo.parent1@example.test",
+      "phone": "510-555-1000"
+    },
+    {
+      "id": "fam_demo_2",
+      "name": "Demo Parent 2",
+      "email": "demo.parent2@example.test",
+      "phone": "510-555-1001"
+    },
+    {
+      "id": "fam_demo_3",
+      "name": "Demo Parent 3",
+      "email": "demo.parent3@example.test",
+      "phone": "510-555-1002"
+    },
+    {
+      "id": "fam_demo_4",
+      "name": "Demo Parent 4",
+      "email": "demo.parent4@example.test",
+      "phone": "510-555-1003"
+    },
+    {
+      "id": "fam_demo_5",
+      "name": "Demo Parent 5",
+      "email": "demo.parent5@example.test",
+      "phone": "510-555-1004"
+    },
+    {
+      "id": "fam_demo_6",
+      "name": "Demo Parent 6",
+      "email": "demo.parent6@example.test",
+      "phone": "510-555-1005"
+    },
+    {
+      "id": "fam_demo_7",
+      "name": "Demo Parent 7",
+      "email": "demo.parent7@example.test",
+      "phone": "510-555-1006"
+    },
+    {
+      "id": "fam_demo_8",
+      "name": "Demo Parent 8",
+      "email": "demo.parent8@example.test",
+      "phone": "510-555-1007"
+    },
+    {
+      "id": "fam_demo_9",
+      "name": "Demo Parent 9",
+      "email": "demo.parent9@example.test",
+      "phone": "510-555-1008"
+    },
+    {
+      "id": "fam_demo_10",
+      "name": "Demo Parent 10",
+      "email": "demo.parent10@example.test",
+      "phone": "510-555-1009"
+    },
+    {
+      "id": "fam_demo_11",
+      "name": "Demo Parent 11",
+      "email": "demo.parent11@example.test",
+      "phone": "510-555-1010"
+    },
+    {
+      "id": "fam_demo_12",
+      "name": "Demo Parent 12",
+      "email": "demo.parent12@example.test",
+      "phone": "510-555-1011"
+    },
+    {
+      "id": "fam_demo_13",
+      "name": "Demo Parent 13",
+      "email": "demo.parent13@example.test",
+      "phone": "510-555-1012"
+    },
+    {
+      "id": "fam_demo_14",
+      "name": "Demo Parent 14",
+      "email": "demo.parent14@example.test",
+      "phone": "510-555-1013"
+    },
+    {
+      "id": "fam_demo_15",
+      "name": "Demo Parent 15",
+      "email": "demo.parent15@example.test",
+      "phone": "510-555-1014"
+    },
+    {
+      "id": "fam_demo_16",
+      "name": "Demo Parent 16",
+      "email": "demo.parent16@example.test",
+      "phone": "510-555-1015"
+    },
+    {
+      "id": "fam_demo_17",
+      "name": "Demo Parent 17",
+      "email": "demo.parent17@example.test",
+      "phone": "510-555-1016"
+    },
+    {
+      "id": "fam_demo_18",
+      "name": "Demo Parent 18",
+      "email": "demo.parent18@example.test",
+      "phone": "510-555-1017"
+    },
+    {
+      "id": "fam_demo_19",
+      "name": "Demo Parent 19",
+      "email": "demo.parent19@example.test",
+      "phone": "510-555-1018"
+    },
+    {
+      "id": "fam_demo_20",
+      "name": "Demo Parent 20",
+      "email": "demo.parent20@example.test",
+      "phone": "510-555-1019"
+    },
+    {
+      "id": "fam_demo_21",
+      "name": "Demo Parent 21",
+      "email": "demo.parent21@example.test",
+      "phone": "510-555-1020"
+    },
+    {
+      "id": "fam_demo_22",
+      "name": "Demo Parent 22",
+      "email": "demo.parent22@example.test",
+      "phone": "510-555-1021"
+    },
+    {
+      "id": "fam_demo_23",
+      "name": "Demo Parent 23",
+      "email": "demo.parent23@example.test",
+      "phone": "510-555-1022"
+    },
+    {
+      "id": "fam_demo_24",
+      "name": "Demo Parent 24",
+      "email": "demo.parent24@example.test",
+      "phone": "510-555-1023"
+    },
+    {
+      "id": "fam_demo_25",
+      "name": "Demo Parent 25",
+      "email": "demo.parent25@example.test",
+      "phone": "510-555-1024"
+    }
+  ],
+  "participants": [
+    {
+      "id": "kid_demo_1",
+      "family_id": "fam_demo_1",
+      "name": "Avery Garcia",
+      "age": 8,
+      "allergies": "Demo allergy note"
+    },
+    {
+      "id": "kid_demo_2",
+      "family_id": "fam_demo_2",
+      "name": "Maya Lee",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_3",
+      "family_id": "fam_demo_3",
+      "name": "Leo Johnson",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_4",
+      "family_id": "fam_demo_4",
+      "name": "Sofia Patel",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_5",
+      "family_id": "fam_demo_5",
+      "name": "Ethan Kim",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_6",
+      "family_id": "fam_demo_6",
+      "name": "Liam Brown",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_7",
+      "family_id": "fam_demo_7",
+      "name": "Chloe Martinez",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_8",
+      "family_id": "fam_demo_8",
+      "name": "Noah Nguyen",
+      "age": 8,
+      "allergies": "Demo allergy note"
+    },
+    {
+      "id": "kid_demo_9",
+      "family_id": "fam_demo_9",
+      "name": "Emma Wilson",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_10",
+      "family_id": "fam_demo_10",
+      "name": "Mateo Davis",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_11",
+      "family_id": "fam_demo_11",
+      "name": "Olivia Lopez",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_12",
+      "family_id": "fam_demo_12",
+      "name": "Lucas Chen",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_13",
+      "family_id": "fam_demo_13",
+      "name": "Mila Taylor",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_14",
+      "family_id": "fam_demo_14",
+      "name": "Henry Anderson",
+      "age": 8,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_15",
+      "family_id": "fam_demo_15",
+      "name": "Zoe Thomas",
+      "age": 8,
+      "allergies": "Demo allergy note"
+    },
+    {
+      "id": "kid_demo_16",
+      "family_id": "fam_demo_16",
+      "name": "Jack Moore",
+      "age": 5,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_17",
+      "family_id": "fam_demo_17",
+      "name": "Aria Jackson",
+      "age": 5,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_18",
+      "family_id": "fam_demo_18",
+      "name": "Ben White",
+      "age": 5,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_19",
+      "family_id": "fam_demo_19",
+      "name": "Nora Harris",
+      "age": 5,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_20",
+      "family_id": "fam_demo_20",
+      "name": "Sam Clark",
+      "age": 5,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_21",
+      "family_id": "fam_demo_21",
+      "name": "Ella Lewis",
+      "age": 9,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_22",
+      "family_id": "fam_demo_22",
+      "name": "Theo Walker",
+      "age": 9,
+      "allergies": "Demo allergy note"
+    },
+    {
+      "id": "kid_demo_23",
+      "family_id": "fam_demo_23",
+      "name": "Lily Hall",
+      "age": 9,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_24",
+      "family_id": "fam_demo_24",
+      "name": "Max Young",
+      "age": 9,
+      "allergies": ""
+    },
+    {
+      "id": "kid_demo_25",
+      "family_id": "fam_demo_25",
+      "name": "Ruby Allen",
+      "age": 9,
+      "allergies": ""
+    }
+  ],
+  "registrations": [
+    {
+      "id": "reg_demo_1",
+      "session_id": "sess_oct9",
+      "participant_id": "kid_demo_1",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_2",
+      "session_id": "sess_oct12",
+      "participant_id": "kid_demo_2",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_3",
+      "session_id": "sess_nov23",
+      "participant_id": "kid_demo_3",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-03T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_4",
+      "session_id": "sess_kinder9",
+      "participant_id": "kid_demo_4",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-04T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_5",
+      "session_id": "sess_flipwed",
+      "participant_id": "kid_demo_5",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-05T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_6",
+      "session_id": "sess_oct9",
+      "participant_id": "kid_demo_6",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_7",
+      "session_id": "sess_oct12",
+      "participant_id": "kid_demo_7",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-07T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_8",
+      "session_id": "sess_nov23",
+      "participant_id": "kid_demo_8",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-08T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_9",
+      "session_id": "sess_kinder9",
+      "participant_id": "kid_demo_9",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_10",
+      "session_id": "sess_flipwed",
+      "participant_id": "kid_demo_10",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_11",
+      "session_id": "sess_oct9",
+      "participant_id": "kid_demo_11",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-11T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_12",
+      "session_id": "sess_oct12",
+      "participant_id": "kid_demo_12",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-12T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_13",
+      "session_id": "sess_nov23",
+      "participant_id": "kid_demo_13",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-13T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_14",
+      "session_id": "sess_kinder9",
+      "participant_id": "kid_demo_14",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-14T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_15",
+      "session_id": "sess_flipwed",
+      "participant_id": "kid_demo_15",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-15T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_16",
+      "session_id": "sess_oct9",
+      "participant_id": "kid_demo_16",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-16T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_17",
+      "session_id": "sess_oct12",
+      "participant_id": "kid_demo_17",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-17T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_18",
+      "session_id": "sess_nov23",
+      "participant_id": "kid_demo_18",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-18T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_19",
+      "session_id": "sess_kinder9",
+      "participant_id": "kid_demo_19",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-19T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_20",
+      "session_id": "sess_flipwed",
+      "participant_id": "kid_demo_20",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-20T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_21",
+      "session_id": "sess_oct9",
+      "participant_id": "kid_demo_21",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-21T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_22",
+      "session_id": "sess_oct12",
+      "participant_id": "kid_demo_22",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-22T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_23",
+      "session_id": "sess_nov23",
+      "participant_id": "kid_demo_23",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-23T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_24",
+      "session_id": "sess_kinder9",
+      "participant_id": "kid_demo_24",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-24T00:00:00.000Z"
+    },
+    {
+      "id": "reg_demo_25",
+      "session_id": "sess_flipwed",
+      "participant_id": "kid_demo_25",
+      "status": "enrolled",
+      "payment_status": "demo_paid",
+      "created_at": "2026-09-25T00:00:00.000Z"
+    }
+  ],
   "waitlist": [],
   "attendance": []
 }
