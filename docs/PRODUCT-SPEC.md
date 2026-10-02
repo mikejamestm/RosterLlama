@@ -13,7 +13,7 @@ RosterLlama is a polished multi-tenant SaaS for youth-program business owners/op
 - Self-service account creation and onboarding
 - Organization/business profile and branding
 - Owner dashboard
-- Program/session setup with pricing, dates, capacities and custom registration questions
+- Program/session setup with pricing, dates, capacities, optional minimum/maximum age eligibility and custom registration questions
 - Hosted registration and website link/embed
 - Households, multiple children, authorized pickups, allergies/medical notes, waivers/forms
 - Registration lifecycle: draft/pending_payment/enrolled/waitlisted/cancelled/refunded/transferred
@@ -24,7 +24,7 @@ RosterLlama is a polished multi-tenant SaaS for youth-program business owners/op
 - Pickup/sign-out, authorized pickup verification, initials and late sign-out
 - Absence reporting
 - Waitlists with ordered queue, no payment while waiting, configurable 24-hour reserved offers, automatic/manual promotion and offer expiry
-- Capacity shared by registration, payment, transfers, cancellations and waitlist offers
+- Server-enforced age eligibility: operators can leave ages unrestricted, set a minimum only, maximum only, or an exact/range (for example min 3 + max 3 means only age 3 can register). Ineligible children cannot complete registration or bypass the rule client-side.\n- Capacity shared by registration, payment, transfers, cancellations and waitlist offers
 - Reports/exports and audit history
 - Health checker for impossible states
 
