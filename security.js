@@ -1,0 +1,4 @@
+const crypto=require('crypto');
+const hashPassword=(p,s=crypto.randomBytes(16).toString('hex'))=>{const h=crypto.pbkdf2Sync(String(p),s,120000,32,'sha256').toString('hex');return `pbkdf2$120000$${s}$${h}`};
+const verifyPassword=(p,stored)=>{if(!stored)return false;if(stored.startsWith('pbkdf2$')){const [,n,s,h]=stored.split('$');const x=crypto.pbkdf2Sync(String(p),s,+n,32,'sha256');return crypto.timingSafeEqual(x,Buffer.from(h,'hex'));}return stored===crypto.createHash('sha256').update(String(p)).digest('hex')};
+const token=()=>crypto.randomBytes(32).toString('hex');module.exports={hashPassword,verifyPassword,token};
