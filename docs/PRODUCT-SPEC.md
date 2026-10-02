@@ -1,0 +1,34 @@
+# RosterLlama Product Spec
+
+RosterLlama is a polished multi-tenant SaaS for youth-program business owners/operators. The product is about control, organization, automation, and reducing admin.
+
+## Non-negotiables
+- Every customer-facing and owner/staff page is intentionally designed, responsive, and branded.
+- No stock/default framework, checkout, form, table, admin, or placeholder UI.
+- One authoritative database and organization-scoped records.
+- Atomic capacity/registration/payment state changes, idempotency, audit trail, explicit registration states.
+- Existing Afterschool University production systems remain untouched until migration is intentionally approved.
+
+## Product surfaces
+- Self-service account creation and onboarding
+- Organization/business profile and branding
+- Owner dashboard
+- Program/session setup with pricing, dates, capacities and custom registration questions
+- Hosted registration and website link/embed
+- Households, multiple children, authorized pickups, allergies/medical notes, waivers/forms
+- Registration lifecycle: draft/pending_payment/enrolled/waitlisted/cancelled/refunded/transferred
+- Stripe Connect for operator merchant accounts and RosterLlama subscription billing
+- Live rosters
+- Staff users/roles and staff-optimized views
+- Attendance/check-in
+- Pickup/sign-out, authorized pickup verification, initials and late sign-out
+- Absence reporting
+- Waitlists with ordered queue, no payment while waiting, configurable 24-hour reserved offers, automatic/manual promotion and offer expiry
+- Capacity shared by registration, payment, transfers, cancellations and waitlist offers
+- Reports/exports and audit history
+- Health checker for impossible states
+
+## UX
+- Desktop owner workspace plus excellent tablet/mobile staff experiences.
+- Parent registration/pickup flows are simple and fast, but brand positioning is operator-first.
+- Locked RosterLlama logo asset must be used exactly; do not redraw it.
