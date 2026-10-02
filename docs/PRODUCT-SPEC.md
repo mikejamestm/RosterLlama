@@ -28,6 +28,16 @@ RosterLlama is a polished multi-tenant SaaS for youth-program business owners/op
 - Session communications: staff can select one or multiple sessions, generate a deduplicated list of enrolled family emails, copy recipients, draft a subject/message, or hand the draft to their device email client with recipients placed in BCC. Future connected-email sending must be explicit and auditable.\n- Reports/exports and audit history
 - Health checker for impossible states
 
+## Website Integration
+- No-code hosted registration is a first-class option, not merely an embed fallback.
+- Each organization gets a RosterLlama-hosted registration/catalog site using its slug, with organization logo/colors/contact information and category navigation.
+- Owners can choose which categories, programs and sessions are published to the hosted site; changes in RosterLlama update the hosted site automatically.
+- Hosted pages include program/session details, availability, eligibility, questions, add-ons, registration and waitlist flows.
+- Provide program-, session- and category-specific shareable URLs.
+- Support a future custom-domain/subdomain mapping such as register.customerbusiness.com without requiring the customer to run RosterLlama infrastructure.
+- Website Integration settings offer: Hosted Site, Registration Link/Button, Category/Program Links, and Embed.
+- Hosted pages must be mobile-first and intentionally branded, with no RosterLlama admin controls exposed.
+
 ## UX
 - Desktop owner workspace plus excellent tablet/mobile staff experiences.
 - Parent registration/pickup flows are simple and fast, but brand positioning is operator-first.
