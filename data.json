@@ -1,0 +1,58 @@
+{
+  "owners": [
+    {
+      "id": "owner_demo",
+      "email": "owner@demo.test",
+      "password_hash": "0ead2060b65992dca4769af601a1b3a35ef38cfad2c2c465bb160ea764157c5d",
+      "name": "Demo Owner",
+      "organization_id": "org_demo"
+    }
+  ],
+  "organizations": [
+    {
+      "id": "org_demo",
+      "name": "Demo Youth Programs",
+      "slug": "demo",
+      "business_type": "Camp / afterschool",
+      "branding_complete": false,
+      "payments_status": "not_connected"
+    }
+  ],
+  "programs": [
+    {
+      "id": "prog_summer",
+      "organization_id": "org_demo",
+      "name": "Summer Adventure Camp",
+      "type": "camp",
+      "description": "Ages 6–12",
+      "price": 47500,
+      "waitlist_mode": "automatic",
+      "questions": [
+        {
+          "id": "q_allergies",
+          "label": "Allergies / medical notes",
+          "type": "textarea",
+          "required": false,
+          "system_key": "allergies"
+        }
+      ]
+    }
+  ],
+  "sessions": [
+    {
+      "id": "sess_june",
+      "program_id": "prog_summer",
+      "label": "June 8–12",
+      "capacity": 24,
+      "start_date": "2027-06-08",
+      "end_date": "2027-06-12",
+      "price": 47500,
+      "status": "open"
+    }
+  ],
+  "families": [],
+  "participants": [],
+  "registrations": [],
+  "waitlist": [],
+  "attendance": []
+}
