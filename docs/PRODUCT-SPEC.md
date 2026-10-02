@@ -16,7 +16,7 @@ RosterLlama is a polished multi-tenant SaaS for youth-program business owners/op
 - Fully program-specific builder: each program can independently set type, website/category grouping, description, session name, calendar start/end dates, times, pricing, capacity, registration status, age eligibility, multiple-child behavior, waitlist behavior, add-ons such as Extended Care, and its own registration questions. Presets include birthday, booster-seat need, allergies/medical notes, emergency contacts, authorized pickups and waiver; operators can add custom required/optional questions with different input types.
 - Hosted registration and website link/embed
 - Households, multiple children, authorized pickups, allergies/medical notes, waivers/forms
-- Registration lifecycle: draft/pending_payment/enrolled/waitlisted/cancelled/refunded/transferred
+- Registration lifecycle: draft/pending_payment/enrolled/waitlisted/cancelled/refunded/transferred/removed. Staff can remove a participant from a session with confirmation/reason and capacity immediately increases; staff can transfer a registration to another eligible open session with capacity atomically moving between sessions.
 - Stripe Connect for operator merchant accounts and RosterLlama subscription billing
 - Live rosters
 - Staff users/roles and staff-optimized views
