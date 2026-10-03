@@ -25,3 +25,27 @@ CREATE TABLE IF NOT EXISTS disputes(id text PRIMARY KEY,organization_id text NOT
 ALTER TABLE signouts ADD COLUMN IF NOT EXISTS service_date date NOT NULL DEFAULT CURRENT_DATE;
 CREATE UNIQUE INDEX IF NOT EXISTS one_signout_per_participant_session_day ON signouts(participant_id,session_id,service_date);
 CREATE UNIQUE INDEX IF NOT EXISTS one_absence_per_participant_day ON absences(participant_id,absence_date);
+
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS business_type text;
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS website text;
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS branding_complete boolean NOT NULL DEFAULT false;
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS subscription_status text;
+ALTER TABLE participants ADD COLUMN IF NOT EXISTS age text;
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS type text;
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS category text;
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS description text;
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS allow_multiple_children boolean NOT NULL DEFAULT true;
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS addons jsonb NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS waitlist_mode text NOT NULL DEFAULT 'automatic';
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS age_min integer;
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS age_max integer;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS start_date text;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS end_date text;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS start_time text;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS end_time text;
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS answers jsonb NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS removal_reason text;
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS removed_at timestamptz;
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS transferred_from text;
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS transferred_at timestamptz;
+ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS answers jsonb NOT NULL DEFAULT '{}'::jsonb;
