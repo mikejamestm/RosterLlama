@@ -28,6 +28,18 @@ RosterLlama is a polished multi-tenant SaaS for youth-program business owners/op
 - Session communications: staff can select one or multiple sessions, generate a deduplicated list of enrolled family emails, copy recipients, draft a subject/message, or hand the draft to their device email client with recipients placed in BCC. Future connected-email sending must be explicit and auditable.\n- Reports/exports and audit history
 - Health checker for impossible states
 
+## Accounting & Payments
+- User-friendly money overview: gross collected, refunds, fees, disputes, net activity, available/pending balance and payouts.
+- Searchable/filterable transaction ledger linked to family, participant, program, session, registration, payment method and processor transaction ID.
+- Full and partial refunds with remaining-refundable validation, reason, internal note, optional registration removal/capacity reopening, confirmation, processor status and audit trail.
+- Payouts view with amount, arrival date, destination, status, fees and the transactions/refunds/disputes included in each bank deposit.
+- Disputes/chargebacks with reason, amount, response deadline, status and evidence workflow; surface urgent action on the accounting overview.
+- Balance/reconciliation report: starting balance → charges → fees → refunds → disputes/adjustments → payouts → ending balance, plus fee-detail reporting and CSV exports.
+- Separate sales/revenue reporting from processor cash-flow/payout reporting so owners and accountants do not confuse revenue timing with bank deposits.
+- Permission-gate sensitive financial actions such as refunds, payout controls and dispute responses.
+- Stripe Connect is the planned processor boundary: businesses are the merchant, processor webhooks are authoritative, and RosterLlama never stores raw card data.
+- Refunds and other financial mutations require idempotency, audit logging, processor confirmation and clear pending/failed/succeeded states.
+
 ## Website Integration
 - No-code hosted registration is a first-class option, not merely an embed fallback.
 - Each organization gets a RosterLlama-hosted registration/catalog site using its slug, with organization logo/colors/contact information and category navigation.
