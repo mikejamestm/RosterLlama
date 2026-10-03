@@ -63,3 +63,25 @@ ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS amount_due integer;
 
 CREATE TABLE IF NOT EXISTS staff_activation_tokens(token_hash text PRIMARY KEY,staff_id text NOT NULL REFERENCES staff(id) ON DELETE CASCADE,organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,expires_at timestamptz NOT NULL,used_at timestamptz,created_at timestamptz NOT NULL DEFAULT now());
 CREATE INDEX IF NOT EXISTS staff_activation_tokens_staff ON staff_activation_tokens(staff_id,expires_at);
+
+
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS currency text NOT NULL DEFAULT 'usd';
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS payment_intent_id text;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS charge_id text;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS fee integer NOT NULL DEFAULT 0;
+CREATE UNIQUE INDEX IF NOT EXISTS payments_payment_intent_unique ON payments(payment_intent_id) WHERE payment_intent_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS payments_charge_unique ON payments(charge_id) WHERE charge_id IS NOT NULL;
+
+ALTER TABLE refunds ADD COLUMN IF NOT EXISTS currency text NOT NULL DEFAULT 'usd';
+
+ALTER TABLE payouts ADD COLUMN IF NOT EXISTS currency text NOT NULL DEFAULT 'usd';
+ALTER TABLE payouts ADD COLUMN IF NOT EXISTS fee integer NOT NULL DEFAULT 0;
+ALTER TABLE payouts ADD COLUMN IF NOT EXISTS failure_message text;
+ALTER TABLE payouts ADD COLUMN IF NOT EXISTS arrival_at timestamptz;
+
+ALTER TABLE disputes ADD COLUMN IF NOT EXISTS currency text NOT NULL DEFAULT 'usd';
+ALTER TABLE disputes ADD COLUMN IF NOT EXISTS payment_intent_id text;
+ALTER TABLE disputes ADD COLUMN IF NOT EXISTS charge_id text;
+ALTER TABLE disputes ADD COLUMN IF NOT EXISTS outcome text;
+ALTER TABLE disputes ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();
+CREATE UNIQUE INDEX IF NOT EXISTS disputes_processor_unique ON disputes(processor_id) WHERE processor_id IS NOT NULL;
