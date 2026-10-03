@@ -85,3 +85,10 @@ ALTER TABLE disputes ADD COLUMN IF NOT EXISTS charge_id text;
 ALTER TABLE disputes ADD COLUMN IF NOT EXISTS outcome text;
 ALTER TABLE disputes ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();
 CREATE UNIQUE INDEX IF NOT EXISTS disputes_processor_unique ON disputes(processor_id) WHERE processor_id IS NOT NULL;
+
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS contact_email text;
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS contact_phone text;
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS logo_url text;
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS primary_color text;
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS waiver_title text;
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS waiver_text text;
