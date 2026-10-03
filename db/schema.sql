@@ -60,3 +60,6 @@ ALTER TABLE registrations ADD COLUMN IF NOT EXISTS amount_due integer;
 
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS addons jsonb NOT NULL DEFAULT '[]'::jsonb;
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS amount_due integer;
+
+CREATE TABLE IF NOT EXISTS staff_activation_tokens(token_hash text PRIMARY KEY,staff_id text NOT NULL REFERENCES staff(id) ON DELETE CASCADE,organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,expires_at timestamptz NOT NULL,used_at timestamptz,created_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS staff_activation_tokens_staff ON staff_activation_tokens(staff_id,expires_at);
