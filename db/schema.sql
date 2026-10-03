@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS disputes(id text PRIMARY KEY,organization_id text NOT
 
 ALTER TABLE signouts ADD COLUMN IF NOT EXISTS service_date date NOT NULL DEFAULT CURRENT_DATE;
 CREATE UNIQUE INDEX IF NOT EXISTS one_signout_per_participant_session_day ON signouts(participant_id,session_id,service_date);
-CREATE UNIQUE INDEX IF NOT EXISTS one_absence_per_participant_day ON absences(participant_id,absence_date);
+DROP INDEX IF EXISTS one_absence_per_participant_day;
+CREATE UNIQUE INDEX IF NOT EXISTS one_absence_per_participant_session_day ON absences(participant_id,session_id,absence_date) WHERE session_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS one_general_absence_per_participant_day ON absences(participant_id,absence_date) WHERE session_id IS NULL;
 
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS business_type text;
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS website text;
