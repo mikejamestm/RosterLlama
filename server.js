@@ -1,5 +1,7 @@
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {hashPassword,verifyPassword,token}=require('./security');
+const database=require('./database');
+let databaseStatus={enabled:false,ready:false,error:null};
 const sessions=new Map();
 const ROOT=__dirname,PUB=path.join(ROOT,'public'),DB=path.join(ROOT,'data.json');
 const seed={owners:[{id:'owner_demo',email:'owner@demo.test',password_hash:crypto.createHash('sha256').update('demo1234').digest('hex'),name:'Demo Owner',organization_id:'org_demo'}],organizations:[{id:'org_demo',name:'Demo Youth Programs',slug:'demo',business_type:'Camp / afterschool',branding_complete:false,payments_status:'not_connected'}],programs:[{id:'prog_summer',organization_id:'org_demo',name:'Summer Adventure Camp',type:'camp',description:'Ages 6–12',price:47500,waitlist_mode:'automatic',questions:[{id:'q_allergies',label:'Allergies / medical notes',type:'textarea',required:false,system_key:'allergies'}]}],sessions:[{id:'sess_june',program_id:'prog_summer',label:'June 8–12',capacity:3}],families:[],participants:[],registrations:[],waitlist:[],attendance:[]};
@@ -61,4 +63,4 @@ if(req.method==='POST'&&u.pathname.startsWith('/api/attendance/')){const a=requi
  if(req.method==='POST'&&u.pathname==='/api/reset'){save(seed);return json(res,200,{ok:true});}
  let file=u.pathname==='/'?'index.html':u.pathname.startsWith('/register/')?'register.html':u.pathname==='/family'||u.pathname==='/family/'?'family.html':u.pathname.slice(1);let fp=path.join(PUB,file);if(!fp.startsWith(PUB)||!fs.existsSync(fp)){res.writeHead(404);return res.end('Not found')}let ext=path.extname(fp);let ct=ext==='.html'?'text/html':ext==='.js'?'application/javascript':ext==='.css'?'text/css':ext==='.png'?'image/png':'application/octet-stream';res.writeHead(200,{'content-type':ct});fs.createReadStream(fp).pipe(res);
 }catch(e){json(res,500,{error:e.message})}});
-server.listen(process.env.PORT||4173,()=>console.log('RosterLlama MVP http://localhost:'+(process.env.PORT||4173)));
+(async()=>{try{const m=await database.migrate();databaseStatus={enabled:m.enabled,ready:m.enabled,error:null};if(m.enabled)console.log('PostgreSQL schema ready')}catch(e){databaseStatus={enabled:!!process.env.DATABASE_URL,ready:false,error:e.message};console.error('PostgreSQL initialization failed:',e.message)}server.listen(process.env.PORT||4173,()=>console.log('RosterLlama MVP http://localhost:'+(process.env.PORT||4173)));})();
