@@ -1,7 +1,7 @@
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let state=null,me=null,initialViewApplied=false;const loginOrgSlug=new URLSearchParams(location.search).get('org')||'';
 async function api(url,opt={}){opt.headers={'content-type':'application/json',...(opt.headers||{})};let r=await fetch(url,opt),j=await r.json().catch(()=>({}));if(!r.ok){let e=Error(j.error||'Something went wrong');e.status=r.status;e.details=j;throw e}return j}
 const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-const money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format((c||0)/100);
+const money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:Number(c||0)%100?2:0,maximumFractionDigits:2}).format((Number(c)||0)/100);
 function localDateISO(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day}
 
 function notify(message,type='info'){const t=$('#toast');if(!t)return;t.textContent=message;t.className='toast'+(type==='error'?' error':'');clearTimeout(notify.timer);notify.timer=setTimeout(()=>t.classList.add('hidden'),3200)}
