@@ -15,7 +15,7 @@ function renderChildren(){
     }).join('');
     return '<div class="familychild"><h3>'+esc(p.name)+'</h3><p class="muted">'+(p.allergies?'Medical / allergy note on file':'No medical notes listed')+'</p><button type="button" class="small editprofile" data-id="'+esc(p.id)+'">Emergency & pickup info</button>'+cards+'</div>';
   }).join('')||'<div class="empty">No children or registrations yet.</div>';
-  document.querySelectorAll('.payreg').forEach(b=>b.onclick=async()=>{try{const x=await call('/api/family/registrations/'+b.dataset.id+'/payment-intent',{method:'POST',body:'{}'});alert(x.message||'Payment ready.')}catch(e){alert(e.message)}});
+  document.querySelectorAll('.payreg').forEach(b=>b.onclick=async()=>{const original=b.textContent;b.disabled=true;b.textContent='Opening secure checkout…';try{const x=await call('/api/family/registrations/'+b.dataset.id+'/payment-intent',{method:'POST',body:'{}'});if(x.checkout_url){location.href=x.checkout_url;return}alert(x.message||'Payment is not available yet.')}catch(e){alert(e.message);b.disabled=false;b.textContent=original}});
   document.querySelectorAll('.receiptbtn').forEach(b=>b.onclick=()=>openReceipt(b.dataset.id));
   document.querySelectorAll('.regrequest').forEach(b=>b.onclick=()=>openRequest(b.dataset.id));
   document.querySelectorAll('.editprofile').forEach(b=>b.onclick=()=>openSafety(b.dataset.id));
