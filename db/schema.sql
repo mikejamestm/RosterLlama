@@ -103,3 +103,18 @@ ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS waiver_accepted_at timestamptz;
 ALTER TABLE disputes ADD COLUMN IF NOT EXISTS evidence jsonb NOT NULL DEFAULT '{}'::jsonb;
 ALTER TABLE disputes ADD COLUMN IF NOT EXISTS evidence_submitted_at timestamptz;
 ALTER TABLE disputes ADD COLUMN IF NOT EXISTS internal_note text;
+
+CREATE TABLE IF NOT EXISTS communications(
+  id text PRIMARY KEY,
+  organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  actor_type text NOT NULL,
+  actor_id text,
+  session_ids jsonb NOT NULL DEFAULT '[]'::jsonb,
+  subject text NOT NULL DEFAULT '',
+  body text NOT NULL DEFAULT '',
+  recipient_count integer NOT NULL DEFAULT 0 CHECK(recipient_count>=0),
+  delivery_method text NOT NULL DEFAULT 'mailto',
+  status text NOT NULL DEFAULT 'handed_off',
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS communications_org_created ON communications(organization_id,created_at DESC);
