@@ -127,3 +127,5 @@ CREATE INDEX IF NOT EXISTS absences_session_date ON absences(session_id,absence_
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS timezone text NOT NULL DEFAULT 'America/Los_Angeles';
 ALTER TABLE attendance ADD COLUMN IF NOT EXISTS service_date date;
 CREATE INDEX IF NOT EXISTS attendance_session_service_date ON attendance(session_id,service_date);
+
+CREATE UNIQUE INDEX IF NOT EXISTS one_attendance_action_per_session_day ON attendance(participant_id,session_id,service_date,action) WHERE service_date IS NOT NULL;
