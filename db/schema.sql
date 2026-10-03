@@ -99,3 +99,7 @@ ALTER TABLE registrations ADD COLUMN IF NOT EXISTS waiver_accepted_at timestampt
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS waiver_title text;
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS waiver_text text;
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS waiver_accepted_at timestamptz;
+
+ALTER TABLE disputes ADD COLUMN IF NOT EXISTS evidence jsonb NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE disputes ADD COLUMN IF NOT EXISTS evidence_submitted_at timestamptz;
+ALTER TABLE disputes ADD COLUMN IF NOT EXISTS internal_note text;
