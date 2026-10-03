@@ -118,3 +118,6 @@ CREATE TABLE IF NOT EXISTS communications(
   created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS communications_org_created ON communications(organization_id,created_at DESC);
+
+ALTER TABLE absences ADD COLUMN IF NOT EXISTS session_id text REFERENCES sessions(id);
+CREATE INDEX IF NOT EXISTS absences_session_date ON absences(session_id,absence_date);
