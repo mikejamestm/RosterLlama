@@ -150,3 +150,7 @@ CREATE TABLE IF NOT EXISTS platform_billing_events (
 );
 
 ALTER TABLE programs ADD COLUMN IF NOT EXISTS waitlist_offer_hours integer NOT NULL DEFAULT 24 CHECK (waitlist_offer_hours BETWEEN 1 AND 168);
+
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS published boolean NOT NULL DEFAULT true;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS published boolean NOT NULL DEFAULT true;
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS hidden_categories jsonb NOT NULL DEFAULT '[]'::jsonb;

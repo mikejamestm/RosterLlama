@@ -66,6 +66,7 @@ async function billingTests(){
     assert.equal((await request('/api/kiosk/devices/revoke',{},owner)).status,200);assert.equal((await request('/api/kiosk/me',null,kiosk)).status,401);
     r=await request('/api/family/login',{email:'family-'+suffix+'@test.local',password:'StrongPass123!'});assert.equal(r.status,200);
     const family=r.cookie;r=await request('/api/family/waitlist/'+wait+'/accept',{},family);assert.equal(r.status,200);assert.equal(r.body.registration.payment_status,'not_required');assert.equal(r.body.registration.waiver_text,'Original waiver');assert.equal((await request('/api/family/waitlist/'+wait+'/accept',{},family)).status,409);
+    r=await request('/api/programs/'+prog+'/sessions',{label:'Added session',capacity:4,price:15,status:'closed'},owner);assert.equal(r.status,201);assert.equal(r.body.price,1500);assert.equal(r.body.program_id,prog);
     r=await request('/api/programs/'+prog,{waitlist_offer_hours:6,name:'Updated Workflow'},owner,'PATCH');assert.equal(r.status,200);assert.equal(r.body.waitlist_offer_hours,6);
     assert.equal((await request('/api/programs/'+prog,{waitlist_offer_hours:0},owner,'PATCH')).status,400);
     // A session with an enrollment and a reserved offer cannot shrink to one spot.
@@ -74,6 +75,23 @@ async function billingTests(){
     r=await request('/api/sessions/'+sid,{capacity:3,start_time:'09:00',end_time:'16:00'},owner,'PATCH');assert.equal(r.status,200);assert.equal(r.body.end_time,'16:00');
     await database.withTransaction(c=>c.query('update programs set age_min=12 where id=$1',[prog]));
     r=await request('/api/registrations/reg_'+suffix+'/transfer',{target_session_id:other},owner);assert.equal(r.status,409);assert.match(r.body.error,/age requirements/);
+    // Hidden content cannot be submitted through a direct API call.
+    r=await request('/api/website/publishing',{type:'program',id:prog,published:false},owner,'PATCH');assert.equal(r.status,200);
+    let catalog=await request('/api/public/'+oid);assert.equal(catalog.body.programs.length,0);
+    r=await request('/api/register',{session_id:sid,guardian:'New Guardian',email:'new-'+suffix+'@test.local',child:'New Child',age:13});assert.equal(r.status,409);assert.match(r.body.error,/not published/);
+    await request('/api/website/publishing',{type:'program',id:prog,published:true},owner,'PATCH');
+    await request('/api/website/publishing',{type:'session',id:sid,published:false},owner,'PATCH');catalog=await request('/api/public/'+oid);assert.ok(!catalog.body.sessions.some(s=>s.id===sid));
+    await request('/api/website/publishing',{type:'session',id:sid,published:true},owner,'PATCH');
+    await request('/api/programs/'+prog,{category:'School Camp',age_min:5,age_max:10},owner,'PATCH');
+    await request('/api/website/publishing',{type:'category',id:'School Camp',published:false},owner,'PATCH');catalog=await request('/api/public/'+oid);assert.equal(catalog.body.programs.length,0);
+    await request('/api/website/publishing',{type:'category',id:'School Camp',published:true},owner,'PATCH');
+    assert.equal((await request('/api/website/publishing',{type:'program',id:'prog_summer',published:false},owner,'PATCH')).status,404);
+    const birthday=new Date();birthday.setUTCFullYear(birthday.getUTCFullYear()-8);const birth=birthday.toISOString().slice(0,10);
+    await database.withTransaction(c=>c.query('update programs set questions=$2::jsonb where id=$1',[prog,JSON.stringify([{id:'birthday_q',label:'Birthday',type:'date',system_key:'birthday',required:true}])]));
+    // Restart hydration so this registration also exercises the blank manual-age field on the public page.
+    p.kill();await new Promise(resolve=>p.once('exit',resolve));
+    const restart=spawn(process.execPath,['server.js'],{cwd:__dirname,env:{...process.env,PORT:'4200',SESSION_SECRET:'workflow-tests-secret-at-least-32-characters'},stdio:'inherit'});
+    try{await waitReady();r=await request('/api/register',{session_id:sid,guardian:'New Guardian',email:'new-'+suffix+'@test.local',child:'Birthday Child',age:'',answers:{birthday_q:birth}});assert.equal(r.status,201);assert.equal(r.body.payment_status,'not_required')}finally{restart.kill()}
     await billingTests();console.log('RosterLlama pickup, family waitlist, transfer eligibility and subscription workflow tests passed');
   }finally{p.kill();await database.getPool().end()}
 })().catch(e=>{console.error(e);process.exitCode=1;database.getPool()?.end()});
