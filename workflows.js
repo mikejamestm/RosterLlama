@@ -60,7 +60,7 @@ function createWorkflows(ctx) {
         const x = await body(req), token = String(x.token || '');
         if (!/^[A-Za-z0-9_-]{43}$/.test(token)) throw fail(401, 'This pickup link is invalid.');
         const g = await database.withTransaction(c=>grant(c,{headers:{cookie:'rl_kiosk='+token}}));
-        json(res,200,{ok:true},{'set-cookie':cookie(req,token,Math.max(0,Math.floor((new Date(g.expires_at)-Date.now())/1000)))});return true;
+        json(res,200,{ok:true},{'set-cookie':[cookie(req,token,Math.max(0,Math.floor((new Date(g.expires_at)-Date.now())/1000))), 'rl_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0', 'rl_family=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0']});return true;
       }
       if (req.method === 'POST' && u.pathname === '/api/kiosk/logout') {
         // Close this device without requiring access to the staff account.
@@ -98,7 +98,7 @@ function createWorkflows(ctx) {
       }
       if (u.pathname.startsWith('/api/billing/subscription')) {
         const a=requireRole(req,res,d,['owner']);if(!a)return true;
-        const configured=!!(process.env.STRIPE_SECRET_KEY&&process.env.STRIPE_SUBSCRIPTION_PRICE_ID&&process.env.STRIPE_WEBHOOK_SECRET);
+        const configured=!!(process.env.STRIPE_SECRET_KEY&&process.env.STRIPE_SUBSCRIPTION_PRICE_ID&&(process.env.STRIPE_PLATFORM_WEBHOOK_SECRET||process.env.STRIPE_WEBHOOK_SECRET));
         const origin=process.env.PUBLIC_BASE_URL || ('https://'+process.env.RAILWAY_PUBLIC_DOMAIN);
         if(req.method==='GET'&&u.pathname==='/api/billing/subscription') {
           const result=await database.withTransaction(c=>c.query('select status,cancel_at_period_end,current_period_end,customer_id from platform_billing where organization_id=$1',[a.org.id]));
