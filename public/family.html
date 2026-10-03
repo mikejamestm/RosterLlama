@@ -2,7 +2,7 @@
 const $=s=>document.querySelector(s);
 const money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(c)||0)/100);
 const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-const orgSlug=new URLSearchParams(location.search).get('org')||'';
+const params=new URLSearchParams(location.search),orgSlug=params.get('org')||'',activationToken=params.get('activate')||'';
 let F=null;
 async function call(url,o={}){const r=await fetch(url,{...o,headers:{'content-type':'application/json',...(o.headers||{})}});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||'Something went wrong');return j}
 function programForSession(s){return F.programs.find(p=>p.id===s?.program_id)}
@@ -29,7 +29,7 @@ function render(){ $('#familylogin').classList.add('hidden');$('#familyapp').cla
 async function reload(){F=await call('/api/family/me');render()}
 async function boot(){try{await reload()}catch(e){}}boot();
 $('#familyloginform').onsubmit=async e=>{e.preventDefault();$('#familyloginerror').textContent='';try{await call('/api/family/login',{method:'POST',body:JSON.stringify({email:$('#familyemail').value,password:$('#familypassword').value,organization_slug:orgSlug})});await reload()}catch(err){$('#familyloginerror').textContent=err.message}};
-$('#activatefamily').onclick=async()=>{const email=$('#familyemail').value||prompt('Family email address');if(!email)return;const pw=prompt('Create a password (at least 8 characters)');if(!pw)return;try{await call('/api/family/activate',{method:'POST',body:JSON.stringify({email,password:pw,organization_slug:orgSlug})});$('#familyemail').value=email;$('#familypassword').value=pw;alert('Account activated. You can sign in now.')}catch(err){$('#familyloginerror').textContent=err.message}};
+if(activationToken)$('#activatefamily').textContent='Activate your invited account';$('#activatefamily').onclick=async()=>{if(!activationToken){$('#familyloginerror').textContent='Ask your program for a secure Family Portal invitation link.';return}const pw=prompt('Create a password (at least 8 characters)');if(!pw)return;try{const j=await call('/api/family/activate',{method:'POST',body:JSON.stringify({token:activationToken,password:pw})});$('#familyemail').value=j.email||'';$('#familypassword').value=pw;history.replaceState({},'',orgSlug?'/family?org='+encodeURIComponent(orgSlug):'/family');alert('Account activated. Sign in with your new password.')}catch(err){$('#familyloginerror').textContent=err.message}};
 $('#familylogout').onclick=async()=>{await call('/api/family/logout',{method:'POST'});location.reload()};
 $('#requesttype').onchange=()=>$('#requesttargetwrap').classList.toggle('hidden',$('#requesttype').value!=='transfer');
 $('#requestcancel').onclick=()=>$('#requestdialog').close();
