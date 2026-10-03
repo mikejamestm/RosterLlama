@@ -57,3 +57,6 @@ CREATE INDEX IF NOT EXISTS family_activation_tokens_family ON family_activation_
 
 ALTER TABLE registrations ADD COLUMN IF NOT EXISTS addons jsonb NOT NULL DEFAULT '[]'::jsonb;
 ALTER TABLE registrations ADD COLUMN IF NOT EXISTS amount_due integer;
+
+ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS addons jsonb NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS amount_due integer;
