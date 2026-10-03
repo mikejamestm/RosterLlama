@@ -92,3 +92,10 @@ ALTER TABLE organizations ADD COLUMN IF NOT EXISTS logo_url text;
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS primary_color text;
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS waiver_title text;
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS waiver_text text;
+
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS waiver_title text;
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS waiver_text text;
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS waiver_accepted_at timestamptz;
+ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS waiver_title text;
+ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS waiver_text text;
+ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS waiver_accepted_at timestamptz;
