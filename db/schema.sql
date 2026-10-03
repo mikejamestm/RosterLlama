@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS payouts(id text PRIMARY KEY,organization_id text NOT 
 CREATE TABLE IF NOT EXISTS disputes(id text PRIMARY KEY,organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,payment_id text REFERENCES payments(id),amount integer NOT NULL,status text NOT NULL,reason text,evidence_due_at timestamptz,processor_id text UNIQUE,created_at timestamptz NOT NULL DEFAULT now());
 
 ALTER TABLE signouts ADD COLUMN IF NOT EXISTS service_date date NOT NULL DEFAULT CURRENT_DATE;
+ALTER TABLE absences ADD COLUMN IF NOT EXISTS session_id text REFERENCES sessions(id);
 CREATE UNIQUE INDEX IF NOT EXISTS one_signout_per_participant_session_day ON signouts(participant_id,session_id,service_date);
 DROP INDEX IF EXISTS one_absence_per_participant_day;
 CREATE UNIQUE INDEX IF NOT EXISTS one_absence_per_participant_session_day ON absences(participant_id,session_id,absence_date) WHERE session_id IS NOT NULL;
@@ -121,7 +122,6 @@ CREATE TABLE IF NOT EXISTS communications(
 );
 CREATE INDEX IF NOT EXISTS communications_org_created ON communications(organization_id,created_at DESC);
 
-ALTER TABLE absences ADD COLUMN IF NOT EXISTS session_id text REFERENCES sessions(id);
 CREATE INDEX IF NOT EXISTS absences_session_date ON absences(session_id,absence_date);
 
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS timezone text NOT NULL DEFAULT 'America/Los_Angeles';
