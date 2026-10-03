@@ -49,3 +49,5 @@ ALTER TABLE registrations ADD COLUMN IF NOT EXISTS removed_at timestamptz;
 ALTER TABLE registrations ADD COLUMN IF NOT EXISTS transferred_from text;
 ALTER TABLE registrations ADD COLUMN IF NOT EXISTS transferred_at timestamptz;
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS answers jsonb NOT NULL DEFAULT '{}'::jsonb;
+
+CREATE UNIQUE INDEX IF NOT EXISTS one_pending_registration_request ON registration_requests(registration_id) WHERE status='pending';
