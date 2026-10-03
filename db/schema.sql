@@ -123,3 +123,7 @@ CREATE INDEX IF NOT EXISTS communications_org_created ON communications(organiza
 
 ALTER TABLE absences ADD COLUMN IF NOT EXISTS session_id text REFERENCES sessions(id);
 CREATE INDEX IF NOT EXISTS absences_session_date ON absences(session_id,absence_date);
+
+ALTER TABLE organizations ADD COLUMN IF NOT EXISTS timezone text NOT NULL DEFAULT 'America/Los_Angeles';
+ALTER TABLE attendance ADD COLUMN IF NOT EXISTS service_date date;
+CREATE INDEX IF NOT EXISTS attendance_session_service_date ON attendance(session_id,service_date);
