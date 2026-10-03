@@ -51,3 +51,6 @@ ALTER TABLE registrations ADD COLUMN IF NOT EXISTS transferred_at timestamptz;
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS answers jsonb NOT NULL DEFAULT '{}'::jsonb;
 
 CREATE UNIQUE INDEX IF NOT EXISTS one_pending_registration_request ON registration_requests(registration_id) WHERE status='pending';
+
+CREATE TABLE IF NOT EXISTS family_activation_tokens(token_hash text PRIMARY KEY,family_id text NOT NULL REFERENCES families(id) ON DELETE CASCADE,organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,expires_at timestamptz NOT NULL,used_at timestamptz,created_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS family_activation_tokens_family ON family_activation_tokens(family_id,expires_at);
