@@ -24,8 +24,10 @@ RosterLlama is a polished multi-tenant SaaS for youth-program business owners/op
 - Pickup/sign-out, authorized pickup verification, initials and late sign-out
 - Absence reporting
 - Waitlists with ordered queue, no payment while waiting, configurable 24-hour reserved offers, automatic/manual promotion and offer expiry
-- Server-enforced age eligibility: operators can leave ages unrestricted, set a minimum only, maximum only, or an exact/range (for example min 3 + max 3 means only age 3 can register). Ineligible children cannot complete registration or bypass the rule client-side.\n- Capacity shared by registration, payment, transfers, cancellations and waitlist offers
-- Session communications: staff can select one or multiple sessions, generate a deduplicated list of enrolled family emails, copy recipients, draft a subject/message, or hand the draft to their device email client with recipients placed in BCC. Future connected-email sending must be explicit and auditable.\n- Reports/exports and audit history
+- Server-enforced age eligibility: operators can leave ages unrestricted, set a minimum only, maximum only, or an exact/range (for example min 3 + max 3 means only age 3 can register). Ineligible children cannot complete registration or bypass the rule client-side.
+- Capacity shared by registration, payment, transfers, cancellations and waitlist offers
+- Session communications: staff can select one or multiple sessions, generate a deduplicated list of enrolled family emails, copy recipients, draft a subject/message, or hand the draft to their device email client with recipients placed in BCC. Future connected-email sending must be explicit and auditable.
+- Reports/exports and audit history
 - Health checker for impossible states
 
 ## Accounting & Payments
@@ -54,3 +56,4 @@ RosterLlama is a polished multi-tenant SaaS for youth-program business owners/op
 - Desktop owner workspace plus excellent tablet/mobile staff experiences.
 - Parent registration/pickup flows are simple and fast, but brand positioning is operator-first.
 - Locked RosterLlama logo asset must be used exactly; do not redraw it.
+

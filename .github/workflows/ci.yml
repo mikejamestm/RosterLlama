@@ -35,3 +35,7 @@ jobs:
           node --check public/app.js
           node --check server.js
           node --check database.js
+          node --check workflows.js
+          node --check public/pickup.js
+          node --check test-workflows.js
+

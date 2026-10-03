@@ -129,3 +129,22 @@ ALTER TABLE attendance ADD COLUMN IF NOT EXISTS service_date date;
 CREATE INDEX IF NOT EXISTS attendance_session_service_date ON attendance(session_id,service_date);
 
 CREATE UNIQUE INDEX IF NOT EXISTS one_attendance_action_per_session_day ON attendance(participant_id,session_id,service_date,action) WHERE service_date IS NOT NULL;
+
+
+CREATE TABLE IF NOT EXISTS pickup_devices (
+  id text PRIMARY KEY, organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  token_hash text UNIQUE NOT NULL, session_ids text[] NOT NULL, expires_at timestamptz NOT NULL,
+  revoked_at timestamptz, created_by text NOT NULL, created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS pickup_devices_org ON pickup_devices(organization_id);
+CREATE TABLE IF NOT EXISTS platform_billing (
+  organization_id text PRIMARY KEY REFERENCES organizations(id) ON DELETE CASCADE,
+  customer_id text UNIQUE, subscription_id text UNIQUE, checkout_id text,
+  status text NOT NULL DEFAULT 'not_started', cancel_at_period_end boolean NOT NULL DEFAULT false,
+  current_period_end timestamptz, last_event_created bigint NOT NULL DEFAULT 0,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS platform_billing_events (
+  event_id text PRIMARY KEY, organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  type text NOT NULL, received_at timestamptz NOT NULL DEFAULT now()
+);
