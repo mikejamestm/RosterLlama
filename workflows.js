@@ -117,7 +117,7 @@ function createWorkflows(ctx) {
             // Reuse a request key across retries, even if Stripe succeeds before the database commit.
             const key='platform-checkout-'+a.org.id+'-'+(b.checkout_id||'first');
             const checkout=await stripeRequest('/v1/checkout/sessions',{mode:'subscription',customer:b.customer_id,'line_items[0][price]':process.env.STRIPE_SUBSCRIPTION_PRICE_ID,'line_items[0][quantity]':'1','metadata[organization_id]':a.org.id,'subscription_data[metadata][organization_id]':a.org.id,client_reference_id:a.org.id,success_url:origin.replace(/\/$/,'')+'/app?subscription=confirming#settings',cancel_url:returnUrl},{idempotencyKey:key});
-            await c.query('update platform_billing set checkout_id=$2 where organization_id=$1',[a.org.id,checkout.id]);return {checkout_url:checkout.url};
+            await c.query('update platform_billing set checkout_id=$2 where organization_id=$1',[a.org.id,checkout.id]);await c.query("insert into audit_log(id,organization_id,actor_type,actor_id,action,detail) values($1,$2,'owner',$3,'subscription.checkout_started',$4::jsonb)",[id('audit'),a.org.id,a.owner.id,JSON.stringify({checkout_id:checkout.id})]);return {checkout_url:checkout.url};
           });json(res,200,result);return true;
         }
         if(req.method==='POST'&&u.pathname==='/api/billing/subscription/portal'){
@@ -150,7 +150,7 @@ function createWorkflows(ctx) {
         if(b.subscription_id!==subscriptionId&&Number(event.created)<Number(b.last_event_created||0))return;
         const end=sub.current_period_end||sub.items?.data?.[0]?.current_period_end;
         await c.query('update platform_billing set subscription_id=$2,status=$3,cancel_at_period_end=$4,current_period_end=$5,last_event_created=greatest(last_event_created,$6),updated_at=now() where organization_id=$1',[orgId,sub.id,sub.status,!!sub.cancel_at_period_end,end?new Date(end*1000):null,event.created||0]);
-        await c.query('update organizations set subscription_status=$2 where id=$1',[orgId,sub.status]);
+        await c.query('update organizations set subscription_status=$2 where id=$1',[orgId,sub.status]);await c.query("insert into audit_log(id,organization_id,actor_type,actor_id,action,detail) values($1,$2,'stripe',$3,'subscription.updated',$4::jsonb)",[id('audit'),orgId,event.id,JSON.stringify({subscription_id:sub.id,status:sub.status,cancel_at_period_end:!!sub.cancel_at_period_end})]);
       }
       await c.query('insert into platform_billing_events(event_id,organization_id,type) values($1,$2,$3)',[event.id,orgId,event.type]);
     });

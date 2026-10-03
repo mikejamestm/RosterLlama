@@ -148,3 +148,5 @@ CREATE TABLE IF NOT EXISTS platform_billing_events (
   event_id text PRIMARY KEY, organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   type text NOT NULL, received_at timestamptz NOT NULL DEFAULT now()
 );
+
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS waitlist_offer_hours integer NOT NULL DEFAULT 24 CHECK (waitlist_offer_hours BETWEEN 1 AND 168);

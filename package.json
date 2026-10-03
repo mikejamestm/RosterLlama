@@ -4,12 +4,16 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "test": "node test-security.js && node test-workflows.js"
+    "test": "node test-security.js && node test-workflows.js",
+    "test:browser": "node test-browser.js"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
     "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2"
   }
 }

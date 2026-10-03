@@ -25,3 +25,5 @@ Set `STRIPE_SECRET_KEY`, `STRIPE_SUBSCRIPTION_PRICE_ID` (a recurring platform pr
 
 ### Tests
 `npm test` runs security and workflow integration tests against PostgreSQL. Use a disposable database; outside CI set `ALLOW_INTEGRATION_TESTS=true`. Subscription tests use a fake Stripe transport and never charge a card. Coverage includes pickup scope, private-data exclusion, concurrency, revocation, family waitlist acceptance, transfer ages, checkout reuse and out-of-order/idempotent webhook processing.
+
+Programs and sessions can be edited from their cards. Capacity edits lock the session and count both active enrollments and reserved waitlist offers. Operators can configure reserved offer windows from 1 to 168 hours (default 24); manual and automatic promotion use the same setting. Browser tests run with `npm run test:browser` after `npx playwright install chromium`.

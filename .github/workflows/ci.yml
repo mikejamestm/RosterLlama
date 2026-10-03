@@ -30,6 +30,8 @@ jobs:
           node-version: 20
       - run: npm install --no-audit --no-fund
       - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
       - name: Syntax check browser clients
         run: |
           node --check public/app.js

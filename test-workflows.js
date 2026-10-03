@@ -5,7 +5,7 @@ const {hashPassword}=require('./security');
 const {createWorkflows,isAuthorizedAdult,isLate,eligibleAge}=require('./workflows');
 const base='http://127.0.0.1:4200';
 const suffix=Date.now().toString(),oid='workflow_'+suffix,fid='family_'+suffix,pid='participant_'+suffix,sid='session_'+suffix,other='other_'+suffix,prog='program_'+suffix,wait='wait_'+suffix;
-async function request(path,body,cookie){const r=await fetch(base+path,{method:body?'POST':'GET',headers:{'content-type':'application/json',...(cookie?{cookie}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json(),cookie:r.headers.get('set-cookie')?.split(';')[0]};}
+async function request(path,body,cookie,method){const r=await fetch(base+path,{method:method||(body?'POST':'GET'),headers:{'content-type':'application/json',...(cookie?{cookie}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json(),cookie:r.headers.get('set-cookie')?.split(';')[0]};}
 async function waitReady(){for(let i=0;i<120;i++){try{if((await fetch(base+'/health')).status===200)return}catch{}await new Promise(r=>setTimeout(r,500))}throw Error('Workflow server did not become ready')}
 async function billingTests(){
   const checkout=new Map(),calls=[],subs=new Map();let n=0,response;
@@ -66,6 +66,12 @@ async function billingTests(){
     assert.equal((await request('/api/kiosk/devices/revoke',{},owner)).status,200);assert.equal((await request('/api/kiosk/me',null,kiosk)).status,401);
     r=await request('/api/family/login',{email:'family-'+suffix+'@test.local',password:'StrongPass123!'});assert.equal(r.status,200);
     const family=r.cookie;r=await request('/api/family/waitlist/'+wait+'/accept',{},family);assert.equal(r.status,200);assert.equal(r.body.registration.payment_status,'not_required');assert.equal(r.body.registration.waiver_text,'Original waiver');assert.equal((await request('/api/family/waitlist/'+wait+'/accept',{},family)).status,409);
+    r=await request('/api/programs/'+prog,{waitlist_offer_hours:6,name:'Updated Workflow'},owner,'PATCH');assert.equal(r.status,200);assert.equal(r.body.waitlist_offer_hours,6);
+    assert.equal((await request('/api/programs/'+prog,{waitlist_offer_hours:0},owner,'PATCH')).status,400);
+    // A session with an enrollment and a reserved offer cannot shrink to one spot.
+    await database.withTransaction(c=>c.query("insert into waitlist(id,organization_id,session_id,participant_id,status,offer_expires_at) values($1,$2,$3,$4,'offered',now()+interval '1 hour')",['reserved_'+suffix,oid,sid,pid]));
+    r=await request('/api/sessions/'+sid,{capacity:1},owner,'PATCH');assert.equal(r.status,409);assert.match(r.body.error,/reserved offers/);
+    r=await request('/api/sessions/'+sid,{capacity:3,start_time:'09:00',end_time:'16:00'},owner,'PATCH');assert.equal(r.status,200);assert.equal(r.body.end_time,'16:00');
     await database.withTransaction(c=>c.query('update programs set age_min=12 where id=$1',[prog]));
     r=await request('/api/registrations/reg_'+suffix+'/transfer',{target_session_id:other},owner);assert.equal(r.status,409);assert.match(r.body.error,/age requirements/);
     await billingTests();console.log('RosterLlama pickup, family waitlist, transfer eligibility and subscription workflow tests passed');
