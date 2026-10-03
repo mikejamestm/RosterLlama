@@ -21,3 +21,7 @@ CREATE TABLE IF NOT EXISTS signouts(id text PRIMARY KEY,organization_id text NOT
 CREATE TABLE IF NOT EXISTS registration_requests(id text PRIMARY KEY,organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,registration_id text NOT NULL REFERENCES registrations(id),request_type text NOT NULL,target_session_id text REFERENCES sessions(id),reason text,status text NOT NULL DEFAULT 'pending',resolved_by text,created_at timestamptz NOT NULL DEFAULT now(),resolved_at timestamptz);
 CREATE TABLE IF NOT EXISTS payouts(id text PRIMARY KEY,organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,amount integer NOT NULL,status text NOT NULL,arrival_date date,destination text,processor_id text UNIQUE,created_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS disputes(id text PRIMARY KEY,organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,payment_id text REFERENCES payments(id),amount integer NOT NULL,status text NOT NULL,reason text,evidence_due_at timestamptz,processor_id text UNIQUE,created_at timestamptz NOT NULL DEFAULT now());
+
+ALTER TABLE signouts ADD COLUMN IF NOT EXISTS service_date date NOT NULL DEFAULT CURRENT_DATE;
+CREATE UNIQUE INDEX IF NOT EXISTS one_signout_per_participant_session_day ON signouts(participant_id,session_id,service_date);
+CREATE UNIQUE INDEX IF NOT EXISTS one_absence_per_participant_day ON absences(participant_id,absence_date);
