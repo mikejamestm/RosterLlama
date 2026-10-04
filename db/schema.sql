@@ -172,3 +172,25 @@ CREATE TABLE IF NOT EXISTS incident_addenda (
  id text PRIMARY KEY, incident_id text NOT NULL REFERENCES incident_reports(id) ON DELETE CASCADE,
  author_id text NOT NULL, text text NOT NULL, created_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS staff_shifts (
+ id text PRIMARY KEY, organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+ actor_type text NOT NULL CHECK(actor_type IN ('owner','staff')), actor_id text NOT NULL,
+ session_id text NOT NULL REFERENCES sessions(id), started_at timestamptz NOT NULL DEFAULT now(),
+ ended_at timestamptz, correction_note text, corrected_by text, corrected_at timestamptz,
+ CHECK(ended_at IS NULL OR ended_at>=started_at)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS staff_one_open_shift ON staff_shifts(organization_id,actor_type,actor_id) WHERE ended_at IS NULL;
+CREATE INDEX IF NOT EXISTS staff_shifts_org_start ON staff_shifts(organization_id,started_at);
+CREATE TABLE IF NOT EXISTS staff_breaks (
+ id text PRIMARY KEY, shift_id text NOT NULL REFERENCES staff_shifts(id) ON DELETE CASCADE,
+ started_at timestamptz NOT NULL DEFAULT now(), ended_at timestamptz,
+ CHECK(ended_at IS NULL OR ended_at>=started_at)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS staff_one_open_break ON staff_breaks(shift_id) WHERE ended_at IS NULL;
+ALTER TABLE programs ADD COLUMN IF NOT EXISTS ratio_target integer CHECK(ratio_target BETWEEN 1 AND 50);
+
+ALTER TABLE staff_shifts ALTER COLUMN started_at SET DEFAULT clock_timestamp();
+ALTER TABLE staff_breaks ALTER COLUMN started_at SET DEFAULT clock_timestamp();
+
+ALTER TABLE staff_shifts ADD COLUMN IF NOT EXISTS version integer NOT NULL DEFAULT 1;
