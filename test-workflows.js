@@ -44,6 +44,11 @@ async function billingTests(){
     await c.query("insert into registrations(id,organization_id,session_id,participant_id,status,payment_status) values($1,$2,$3,$4,'enrolled','not_required')",['reg_'+suffix,oid,sid,pid]);
     await c.query("insert into waitlist(id,organization_id,session_id,participant_id,status,offer_expires_at,amount_due,waiver_title,waiver_text,waiver_accepted_at) values($1,$2,$3,$4,'offered',now()+interval '1 hour',0,'Waiver','Original waiver',now())",[wait,oid,other,pid]);
   });
+  await database.withTransaction(async c=>{
+    await c.query("update sessions set start_date='2026-10-09',end_date='2026-10-12' where id=$1",[sid]);
+    await c.query("insert into absences(id,organization_id,participant_id,session_id,absence_date,reason) values($1,$2,$3,$4,'2026-10-09','Snapshot date test')",['absence_'+suffix,oid,pid,sid]);
+  });
+  const dateSnapshot=await database.loadSnapshot();assert.equal(dateSnapshot.sessions.find(s=>s.id===sid).start_date,'2026-10-09');assert.equal(dateSnapshot.absences.find(a=>a.id==='absence_'+suffix).date,'2026-10-09');
   const p=spawn(process.execPath,['server.js'],{cwd:__dirname,env:{...process.env,PORT:'4200',SESSION_SECRET:'workflow-tests-secret-at-least-32-characters'},stdio:'inherit'});
   try{
     await waitReady();

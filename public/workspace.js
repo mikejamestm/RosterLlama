@@ -2,6 +2,7 @@
 const workspace={programId:'',sessionId:'',date:'',loaded:false};
 function workspaceKey(){return 'rosterllama.workspace.'+me.organization.id}
 function restoreWorkspace(){
+  allState.sessions=allState.sessions.map(s=>({...s,start_date:String(s.start_date||'').slice(0,10),end_date:String(s.end_date||'').slice(0,10)}));
   if(!workspace.loaded){try{Object.assign(workspace,JSON.parse(sessionStorage.getItem(workspaceKey())||'{}'))}catch{}workspace.loaded=true}
   if(!allState.programs.some(p=>p.id===workspace.programId)){workspace.programId='';workspace.sessionId=''}
   if(!allState.sessions.some(s=>s.id===workspace.sessionId&&s.program_id===workspace.programId))workspace.sessionId='';

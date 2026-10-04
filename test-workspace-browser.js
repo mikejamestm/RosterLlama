@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
 const base='http://127.0.0.1:4208';
 const programs=Array.from({length:20},(_,i)=>({id:'program_'+i,name:i===0?'Bay Explorers Adventure and Nature Camp':i===1?'Kinder Camp':'Class '+(i+1),type:'camp',questions:[],addons:[],price:0,waitlist_mode:'manual'}));
-const sessions=programs.flatMap((p,i)=>[0,1].map(j=>({id:'session_'+i+'_'+j,program_id:p.id,label:j?'October 12':'October 9',start_date:j?'2026-10-12':'2026-10-09',capacity:12,enrolled:1,available:11,status:'open'})));
+const sessions=programs.flatMap((p,i)=>[0,1].map(j=>({id:'session_'+i+'_'+j,program_id:p.id,label:j?'October 12':'October 9',start_date:j?'2026-10-12T00:00:00.000Z':'2026-10-09T00:00:00.000Z',capacity:12,enrolled:1,available:11,status:'open'})));
 const participants=sessions.map((s,i)=>({id:'kid_'+i,family_id:'family_'+i,name:'Participant '+i,authorized_pickups:['Guardian']}));
 const registrations=sessions.map((s,i)=>({id:'reg_'+i,session_id:s.id,participant_id:'kid_'+i,status:'enrolled'}));
 const organization={id:'workspace_test',name:'Twenty Program Organization',timezone:'America/Los_Angeles',slug:'workspace'};
