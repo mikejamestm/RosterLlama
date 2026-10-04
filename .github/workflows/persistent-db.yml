@@ -1,0 +1,37 @@
+name: Persistent database migration check
+on:
+  push:
+    branches: [persistent-db-reliability]
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f db/persistent/Dockerfile -t persistent-db-check .
+      - run: |
+          docker network create migration-check
+          docker run -d --name source-db --network migration-check -e POSTGRES_PASSWORD=source-test-only -e POSTGRES_DB=rosterllama postgres:17-alpine
+          for attempt in $(seq 1 60); do
+            if docker exec source-db pg_isready -U postgres -d rosterllama; then break; fi
+            sleep 1
+          done
+          docker exec source-db psql -U postgres -d rosterllama -v ON_ERROR_STOP=1 -c "create table migration_fixture(id integer primary key, value text); insert into migration_fixture values(1,'preserved');"
+          docker volume create migration-volume
+          docker run -d --name persistent-db --network migration-check -v migration-volume:/var/lib/postgresql/data -e PGDATA=/var/lib/postgresql/data/pgdata -e POSTGRES_PASSWORD=destination-test-only -e POSTGRES_USER=postgres -e POSTGRES_DB=rosterllama -e SOURCE_DATABASE_URL=postgres://postgres:source-test-only@source-db:5432/rosterllama persistent-db-check
+          for attempt in $(seq 1 90); do
+            if docker exec persistent-db test -f /var/lib/postgresql/data/.rosterllama-restored; then break; fi
+            sleep 1
+          done
+          docker exec persistent-db test -f /var/lib/postgresql/data/.rosterllama-restored
+          test "$(docker exec persistent-db psql -U postgres -d rosterllama -Atc 'select value from migration_fixture where id=1')" = preserved
+          test "$(docker exec source-db psql -U postgres -d rosterllama -Atc 'show default_transaction_read_only')" = on
+          docker restart --time 30 persistent-db
+          for attempt in $(seq 1 30); do
+            if docker exec persistent-db pg_isready -U postgres -d rosterllama; then break; fi
+            sleep 1
+          done
+          test "$(docker exec persistent-db psql -U postgres -d rosterllama -Atc 'select value from migration_fixture where id=1')" = preserved
+          docker stop --time 30 persistent-db
+          test "$(docker inspect --format '{{.State.ExitCode}}' persistent-db)" = 0
+      - if: failure()
+        run: docker logs persistent-db || true
