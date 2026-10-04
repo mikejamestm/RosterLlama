@@ -13,7 +13,7 @@ const list=(prog=program,sid='',date=day,identity='manager')=>call('schedule?'+n
 (async()=>{if(!process.env.CI&&process.env.ALLOW_INTEGRATION_TESTS!=='true')throw Error('Use a disposable test database');await database.migrate();
 try{
  await database.withTransaction(async c=>{
-  await c.query('insert into organizations(id,name,slug,timezone) values($1,$1,$1,$4),($2,$2,$2,$4)',[org,other,tz]);
+  await c.query('insert into organizations(id,name,slug,timezone) values($1,$1,$1,$3),($2,$2,$2,$3)',[org,other,tz]);
   await c.query("insert into owners(id,organization_id,name,email,password_hash) values($1,$3,'Owner',$1,'x'),($2,$3,'Other owner',$2,'x')",['owner_'+suffix,'otherowner_'+suffix,org]);
   await c.query("insert into staff(id,organization_id,name,email,role,status) values($1,$3,'Avery Chen',$1,'staff','active'),($2,$3,'Bailey Singh',$2,'staff','active'),($4,$3,'Manager',$4,'manager','active'),($5,$6,'Foreign Staff',$5,'staff','active')",[staff1,staff2,org,manager,'foreignstaff_'+suffix,other]);
   await c.query('insert into programs(id,organization_id,name) values($1,$3,$1),($2,$3,$2),($4,$5,$4)',[program,program2,org,foreignProgram,other]);
@@ -34,8 +34,8 @@ try{
  const changed={...creation(session,staff2,day,'10:00','12:00'),version:1};assert.equal((await call('schedule/'+id,'PATCH',{...changed,staff_id:staff1,start_time:'13:00',end_time:'14:00'},'staff')).status,403);assert.equal((await call('schedule/'+id,'PATCH',{...changed,version:99})).status,409,'Check schedule version');
  assert.equal((await call('schedule/'+id,'PATCH',changed)).status,200);records=(await list()).body;assert.equal(records.assignments.find(a=>a.id===id).staff_id,staff2);assert.equal(records.assignments.length,2);
  assert.equal((await call('schedule/'+id,'PATCH',{version:2,date:day,staff_id:staff1,session_id:session2,start_time:'12:30',end_time:'13:30'})).status,409,'Do not move schedule into an overlapping shift');
- assert.equal((await call('schedule/'+id,'DELETE','', 'staff')).status,403);
- assert.equal((await call('schedule/'+id,'DELETE',{},'manager')).status,200);assert.equal((await list()).body.assignments.length,1,'Cancellation leaves an audit record and frees the time');
+ assert.equal((await call('schedule/'+id,'DELETE',{version:2},'staff')).status,403);assert.equal((await call('schedule/'+id,'DELETE',{version:99},'manager')).status,409);
+ assert.equal((await call('schedule/'+id,'DELETE',{version:2},'manager')).status,200);assert.equal((await list()).body.assignments.length,1,'Cancellation leaves an audit record and frees the time');
  await database.withTransaction(async c=>{const now=new Date();const end=new Date(now.getTime()+3600000);await c.query("insert into staff_assignments(id,organization_id,staff_id,session_id,start_at,end_at,status,created_by) values($1,$2,$3,$4,$5,$6,'scheduled',$7)",['schedule_live_'+suffix,org,staff1,session,new Date(now.getTime()-60000),end,manager]);await c.query('update programs set ratio_target=8 where id=$1',[program]);await c.query("insert into attendance(id,organization_id,session_id,participant_id,action,service_date) values($1,$2,$3,$4,'checkin',$5)",['schedule_att_'+suffix,org,session,child,today])});
  const ratio=(await call('ratios?program='+program,'GET',{},'manager')).body.sessions.find(s=>s.id===session);assert.equal(ratio.present,1);assert.equal(ratio.working_staff,0);assert.equal(ratio.scheduled_staff,1);assert.equal(ratio.status,'no_coverage','Planned staff do not count as clocked-in coverage');
  const edits=await database.withTransaction(c=>c.query("select action from audit_log where organization_id=$1 and action like 'staff.schedule_%' order by created_at",[org]));assert.ok(edits.rows.some(r=>r.action==='staff.schedule_created'));assert.ok(edits.rows.some(r=>r.action==='staff.schedule_updated'));assert.ok(edits.rows.some(r=>r.action==='staff.schedule_cancelled'));
