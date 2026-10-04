@@ -154,3 +154,21 @@ ALTER TABLE programs ADD COLUMN IF NOT EXISTS waitlist_offer_hours integer NOT N
 ALTER TABLE programs ADD COLUMN IF NOT EXISTS published boolean NOT NULL DEFAULT true;
 ALTER TABLE sessions ADD COLUMN IF NOT EXISTS published boolean NOT NULL DEFAULT true;
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS hidden_categories jsonb NOT NULL DEFAULT '[]'::jsonb;
+
+-- Health & safety reports are reviewed before being visible to families.
+CREATE TABLE IF NOT EXISTS incident_reports (
+ id text PRIMARY KEY, organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+ participant_id text NOT NULL REFERENCES participants(id), session_id text NOT NULL REFERENCES sessions(id),
+ occurred_at timestamptz NOT NULL, kind text NOT NULL CHECK(kind IN ('injury','behavior','safety','other')),
+ title text NOT NULL, description text NOT NULL, actions_taken text NOT NULL, internal_notes text NOT NULL DEFAULT '',
+ status text NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','submitted','approved')),
+ author_type text NOT NULL, author_id text NOT NULL, reviewer_id text, reviewed_at timestamptz,
+ notified_at timestamptz, notification_note text, version integer NOT NULL DEFAULT 1,
+ acknowledged_at timestamptz, acknowledged_by text, acknowledged_name text, acknowledged_version integer,
+ created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS incident_reports_org_date ON incident_reports(organization_id,occurred_at DESC);
+CREATE TABLE IF NOT EXISTS incident_addenda (
+ id text PRIMARY KEY, incident_id text NOT NULL REFERENCES incident_reports(id) ON DELETE CASCADE,
+ author_id text NOT NULL, text text NOT NULL, created_at timestamptz NOT NULL DEFAULT now()
+);

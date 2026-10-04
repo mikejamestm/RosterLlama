@@ -36,7 +36,7 @@ function renderWorkspace(){
   for(const id of ['exportcsv','exportreport','openkiosk'])$('#'+id).disabled=!p||(id==='openkiosk'&&!s);
   if(s)$('#kiosksession').value=s.id;
   $$('#sessionlist .sessionrow').forEach((row,index)=>{const session=state.sessions[index];row.tabIndex=0;row.setAttribute('role','button');row.setAttribute('aria-label','Open '+prog(session).name+' '+session.label);const choose=()=>{workspace.programId=session.program_id;workspace.sessionId=session.id;chooseSessionDate(session);applyWorkspace();view('roster')};row.onclick=choose;row.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose()}}});
-  $$('[data-choose-program]').forEach(b=>b.onclick=()=>{selectProgram(b.dataset.chooseProgram)});
+  $$('[data-choose-program]').forEach(b=>b.onclick=()=>{selectProgram(b.dataset.chooseProgram)});window.dispatchEvent(new Event('workspacechange'));
 }
 function csvValue(value){const v=String(value??'');return '"'+(/^[=+@-]/.test(v)?"'":'')+v.replaceAll('"','""')+'"'}
 function downloadCSV(name,rows){const url=URL.createObjectURL(new Blob([rows.map(r=>r.map(csvValue).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
