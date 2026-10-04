@@ -2,7 +2,7 @@ const assert=require('node:assert/strict'),database=require('./database'),{creat
 const suffix=Date.now(),org='incident_org_'+suffix,other='incident_other_'+suffix,staff='incident_staff_'+suffix,manager='incident_manager_'+suffix,family='incident_family_'+suffix,foreign='incident_foreign_'+suffix,child='incident_child_'+suffix,program='incident_program_'+suffix,session='incident_session_'+suffix,session2='incident_second_'+suffix;
 let serial=0;
 async function call(path,method='GET',payload={},role='owner'){
- const a={org:{id:org},role,...(role==='owner'?{owner:{id:'owner_test'}}:{staff:{id:role==='manager'?manager:staff}})};
+ const a={org:{id:role==='otherowner'?other:org},role:role==='otherowner'?'owner':role,...(['owner','otherowner'].includes(role)?{owner:{id:'owner_test'}}:{staff:{id:role==='manager'?manager:staff}})};
  let response;const ops=createOperations({database,ready:()=>true,id:p=>p+'_'+suffix+'_'+(++serial),json:(r,status,body)=>response={status,body},body:async()=>payload,requireAuth:()=>role==='anonymous'?null:a,familySession:()=>role==='family'?{family_id:family}:role==='foreign'?{family_id:foreign}:null});
  await ops.handle({method},{},new URL('https://example.test'+path),{});return response;
 }
@@ -15,14 +15,14 @@ try{
   await c.query('insert into families(id,organization_id,name,email) values($1,$3,$1,$1),($2,$4,$2,$2)',[family,foreign,org,other]);
   await c.query('insert into participants(id,family_id,name) values($1,$2,$1)',[child,family]);
   await c.query('insert into programs(id,organization_id,name) values($1,$2,$1)',[program,org]);
-  await c.query("insert into sessions(id,program_id,label,status) values($1,$3,$1,'open'),($2,$3,$2,'open')",[session,session2,program]);
+  await c.query("insert into sessions(id,program_id,label,status,capacity) values($1,$3,$1,'open',10),($2,$3,$2,'open',10)",[session,session2,program]);
   await c.query("insert into registrations(id,organization_id,session_id,participant_id,status) values($1,$2,$3,$4,'enrolled')",['incident_reg_'+suffix,org,session,child]);
  });
  const fields={session_id:session,participant_id:child,occurred_at:new Date(Date.now()-60000).toISOString(),kind:'injury',title:'Minor fall',description:'Participant tripped.',actions_taken:'Staff checked in and contacted guardian.',internal_notes:'PRIVATE WITNESS NAME'};
  assert.equal((await call(reports,'POST',{...fields,session_id:session2},'staff')).status,403);
  assert.equal((await call(reports,'POST',{...fields,occurred_at:'2099-01-01'},'staff')).status,400);
  let r=await call(reports,'POST',fields,'staff');assert.equal(r.status,201);const id=r.body.id,url=reports+'/'+id;
- assert.deepEqual((await call(familyReports,'GET',{},'family')).body.incidents,[],'Draft must stay private');
+ assert.deepEqual((await call(familyReports,'GET',{},'family')).body.incidents,[],'Draft must stay private');assert.equal((await call(reports,'GET',{},'otherowner')).body.incidents.length,0);assert.equal((await call(url+'/submit','POST',{version:1},'otherowner')).status,404);assert.equal((await call('/api/family/incidents','GET')).status,401);
  assert.equal((await call(url,'PATCH',{...fields,version:1},'manager')).status,200);
  assert.equal((await call(url,'PATCH',{...fields,version:1},'staff')).status,409);
  assert.equal((await call(url+'/submit','POST',{version:2},'staff')).status,200);
@@ -50,3 +50,4 @@ try{
  console.log('Incident workflow, private drafts, family isolation, current roles, corrections, idempotency and concurrency passed');
 }finally{await database.withTransaction(async c=>{await c.query('delete from incident_reports where organization_id=$1',[org]);await c.query('delete from registrations where organization_id=$1',[org]);await c.query('delete from participants where id=$1',[child]);await c.query('delete from organizations where id=any($1::text[])',[[org,other]])});await database.close()}
 })().catch(e=>{console.error(e);process.exit(1)});
+
