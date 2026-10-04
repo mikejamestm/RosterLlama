@@ -1,0 +1,36 @@
+name: RosterLlama uptime
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/uptime.yml'
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check public site and database
+        run: |
+          python - <<'PY'
+          import json, time, urllib.request
+          base = 'https://rosterllama-staging-production.up.railway.app'
+          for attempt in range(3):
+              try:
+                  for path in ['/ready', '/health']:
+                      with urllib.request.urlopen(base + path, timeout=20) as response:
+                          data = json.load(response)
+                          assert data.get('ok') is True, path + ' is unhealthy'
+                  with urllib.request.urlopen(base + '/app', timeout=20) as response:
+                      assert response.status == 200
+                      assert b'RosterLlama' in response.read()
+                  print('Public site, readiness, database and data integrity checks passed')
+                  break
+              except Exception as error:
+                  if attempt == 2:
+                      raise
+                  print('Transient check failure; retrying:', str(error))
+                  time.sleep(15)
+          PY
