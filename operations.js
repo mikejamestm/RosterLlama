@@ -22,7 +22,7 @@ function createOperations(ctx){
    const x=await body(req),name=String(x.name||'').trim();if(x.agree!==true||name.length<2||name.length>160)throw fail(400,'Enter your name and confirm you have read the report.');
    const out=await database.withTransaction(async c=>{
     const r=await c.query("select i.* from incident_reports i join participants p on p.id=i.participant_id join families f on f.id=p.family_id where i.id=$1 and f.id=$2 and i.organization_id=f.organization_id and i.status='approved' for update of i",[u.pathname.split('/')[4],f.family_id]);if(!r.rowCount)throw fail(404,'Incident report not found.');const report=r.rows[0];if(Number(x.version)!==report.version)throw fail(409,'This report has been updated. Read the current version before acknowledging.');
-    if(!report.acknowledged_at){await c.query('update incident_reports set acknowledged_at=now(),acknowledged_by=$2,acknowledged_name=$3,acknowledged_version=version where id=$1',[report.id,f.family_id,name]);await audit(c,report.organization_id,{type:'family',id:f.family_id},'incident.acknowledged',{incident_id:report.id,version:report.version})}
+    if(!report.acknowledged_at){await c.query('update incident_reports set acknowledged_at=now(),acknowledged_by=$2,acknowledged_name=$3,acknowledged_version=version where id=$1',[report.id,f.family_id,name]);await audit(c,report.organization_id,{type:'family',id:f.family_id},'incident.acknowledged',{incident_id:report.id,version:report.version,acknowledged_name:name})}
     return {ok:true};
    });json(res,200,out);return true;
   }
@@ -70,3 +70,4 @@ function createOperations(ctx){
  return {handle};
 }
 module.exports={createOperations};
+
