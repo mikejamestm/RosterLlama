@@ -22,7 +22,7 @@ try{
  });
  assert.equal((await call('schedule','GET')).status,400,'Require explicit program');assert.equal((await list(program,foreignSession)).status,403,'Session must match selected program');assert.equal((await list(program,session,'2099-01-01','otherowner')).status,404,'Keep schedule organization scoped');
  assert.equal((await call('schedule','POST',creation(session,staff1),'staff')).status,403,'Staff cannot edit schedule');
- assert.equal((await call('schedule','POST',creation(session,'foreignstaff_'+suffix))).status,400,'Do not assign outside-organization staff');
+ assert.equal((await call('schedule','POST',creation(session,'foreignstaff_'+suffix),'manager')).status,400,'Do not assign outside-organization staff');
  assert.equal((await call('schedule','POST',creation(session,staff1,today,'09:00','11:00'))).status,400,'Do not create a shift in the past');
  assert.equal((await call('schedule','POST',creation(session,staff1,day,'10:00','09:00'))).status,400);
  assert.equal((await call('schedule','POST',creation(session,staff1,'2026-03-08','02:30','03:30'))).status,400,'Reject nonexistent spring daylight-saving time');
