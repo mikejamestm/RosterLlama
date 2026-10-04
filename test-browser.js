@@ -22,7 +22,7 @@ try{
  await route.fulfill({json:response});});
  await page.goto(base+'/app#settings');await page.locator('#orgdetails').waitFor({state:'attached'});await page.waitForFunction(()=>document.querySelector('#orgdetails').textContent.includes('Browser Test Programs'));
  assert.equal(await page.locator('#settings').isVisible(),true);assert.match(await page.locator('#subscriptionstatus').textContent(),/not available/);
- await page.locator('[data-view="families"]').click();assert.equal(await page.locator('.familyinvite').count(),1);
+ await page.locator('#contextprogram').selectOption('program_ui');await page.locator('[data-view="families"]').click();assert.equal(await page.locator('.familyinvite').count(),1);
  await page.locator('[data-view="accounting"]').click();await page.locator('#transactionsearch').fill('no-match');await page.waitForFunction(()=>document.querySelector('#accountingcontent').textContent.includes('No payment transactions'));await page.locator('#transactionsearch').fill('Guardian');await page.waitForFunction(()=>document.querySelector('#accountingcontent').textContent.includes('Guardian'));await page.locator('[data-acct="payouts"]').click();await page.locator('[data-acct="disputes"]').click();
  await page.locator('[data-view="roster"]').click();assert.equal(await page.locator('[data-transfer]').count(),1);
  await page.locator('nav [data-view="programs"]').click();await page.locator('#emailprograms').click();await page.locator('.email-session').check();await page.context().grantPermissions(['clipboard-read','clipboard-write']);await page.locator('#copyemails').click();await page.waitForFunction(()=>document.querySelector('#emailresult').textContent.includes('1 unique email'));await page.locator('#emaildialog .x').click();

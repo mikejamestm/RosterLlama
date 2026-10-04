@@ -48,6 +48,9 @@ async function billingTests(){
   try{
     await waitReady();
     let r=await request('/api/login',{email:'owner-'+suffix+'@test.local',password:'StrongPass123!'});assert.equal(r.status,200);const owner=r.cookie;
+    assert.equal((await request('/api/attendance/'+pid,{session_id:sid,action:'checkin',service_date:'2099-10-09'},owner)).status,422,'Future-date attendance must not silently record today');
+    assert.equal((await request('/api/signouts',{participant_id:pid,session_id:sid,adult:'Alex Jones',initials:'AJ',service_date:'2099-10-09'},owner)).status,422,'Future-date pickup must not silently record today');
+    const beforeAttendance=await database.withTransaction(c=>c.query('select count(*)::int as n from attendance where organization_id=$1',[oid]));assert.equal(beforeAttendance.rows[0].n,0);
     assert.equal((await request('/api/kiosk/me')).status,401);
     assert.equal((await request('/api/kiosk/devices',{session_ids:['sess_june']},owner)).status,403,'Cross-organization sessions denied');
     r=await request('/api/kiosk/devices',{session_ids:[sid]},owner);assert.equal(r.status,201);const token=r.body.url.split('token=')[1];

@@ -1,7 +1,7 @@
 name: RosterLlama CI
 on:
   push:
-    branches: [main, reliability-staging]
+    branches: [main, reliability-staging, organized-workspace]
   pull_request:
 jobs:
   test:
@@ -33,6 +33,7 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+      - run: node test-workspace-browser.js
       - name: Syntax check browser clients
         run: |
           node --check public/app.js
