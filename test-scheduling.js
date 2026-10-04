@@ -2,7 +2,7 @@ const assert=require('node:assert/strict'),database=require('./database'),{creat
 const suffix=Date.now(),org='schedule_org_'+suffix,other='schedule_other_'+suffix,staff1='schedule_staff1_'+suffix,staff2='schedule_staff2_'+suffix,manager='schedule_manager_'+suffix,program='schedule_prog_'+suffix,program2='schedule_prog2_'+suffix,foreignProgram='schedule_foreign_prog_'+suffix,session='schedule_sess_'+suffix,session2='schedule_sess2_'+suffix,foreignSession='schedule_foreign_sess_'+suffix,family='schedule_family_'+suffix,child='schedule_child_'+suffix;let n=0;
 const tz='America/Los_Angeles',formatDate=d=>new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).format(d);
 const add=(d,n)=>new Date(Date.parse(d+'T12:00:00Z')+n*86400000).toISOString().slice(0,10),today=formatDate(new Date()),day=add(today,2),next=add(today,3);
-async function call(path,method='GET',payload={},identity='staff'){
+async function call(path,method='GET',payload={},identity='manager'){
  const isOwner=['owner','otherowner'].includes(identity),actorId=identity==='owner'?'owner_'+suffix:identity==='otherowner'?'otherowner_'+suffix:identity==='manager'?manager:identity==='staff2'?staff2:staff1;
  const actor={org:{id:identity==='otherowner'?other:org,timezone:tz},role:isOwner?'owner':identity==='manager'?'manager':'staff',...(isOwner?{owner:{id:actorId}}:{staff:{id:actorId}})};let response;
  const ops=createOperations({database,ready:()=>true,id:p=>p+'_'+suffix+'_'+(++n),json:(r,status,body)=>response={status,body},body:async()=>payload,requireAuth:()=>actor,familySession:()=>null,dateInZone:()=>today});
