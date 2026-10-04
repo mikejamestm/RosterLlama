@@ -12,7 +12,7 @@ jobs:
           docker network create migration-check
           docker run -d --name source-db --network migration-check -e POSTGRES_PASSWORD=source-test-only -e POSTGRES_DB=rosterllama postgres:17-alpine
           for attempt in $(seq 1 60); do
-            if docker exec source-db pg_isready -U postgres -d rosterllama; then break; fi
+            if docker exec source-db pg_isready -h 127.0.0.1 -U postgres -d rosterllama; then break; fi
             sleep 1
           done
           docker exec source-db psql -U postgres -d rosterllama -v ON_ERROR_STOP=1 -c "create table migration_fixture(id integer primary key, value text); insert into migration_fixture values(1,'preserved');"
@@ -27,7 +27,7 @@ jobs:
           test "$(docker exec source-db psql -U postgres -d rosterllama -Atc 'show default_transaction_read_only')" = on
           docker restart --time 30 persistent-db
           for attempt in $(seq 1 30); do
-            if docker exec persistent-db pg_isready -U postgres -d rosterllama; then break; fi
+            if docker exec persistent-db pg_isready -h 127.0.0.1 -U postgres -d rosterllama; then break; fi
             sleep 1
           done
           test "$(docker exec persistent-db psql -U postgres -d rosterllama -Atc 'select value from migration_fixture where id=1')" = preserved
