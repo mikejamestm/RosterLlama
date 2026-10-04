@@ -28,3 +28,7 @@
 .shiftcard{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;padding:20px 0;border-bottom:1px solid #e3e5df;overflow-wrap:anywhere}.shiftcard small{display:block;color:#6f7269;margin-top:8px}.shiftcard strong{font-size:22px}.shiftcard button{margin-top:12px}.ratiotarget{flex-wrap:wrap}.ratiohead{flex-wrap:wrap}.ratiocard{overflow-wrap:anywhere}#clockelapsed{overflow-wrap:anywhere}@media(max-width:600px){.shiftcard{grid-template-columns:1fr}.opsgrid .panel{min-width:0}.ratiotarget input{flex:0 1 80px}.opsactions button{flex:1 1 auto}}
 
 #operations .opsgrid{margin-bottom:22px}#operations .opsgrid>.panel{margin:0}@media(min-width:1000px){#operations>.panel>.formgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.schedulehint{margin:14px 0}.schedulecard{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;padding:20px 0;border-bottom:1px solid #e3e5df;overflow-wrap:anywhere}.schedulecard h3{margin:5px 0}.schedulecard p{margin:4px 0;color:#72746b}.scheduleactions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.scheduleactions button{white-space:nowrap}#schedulecount{display:inline-flex;margin-bottom:4px}@media(max-width:600px){.schedulecard{grid-template-columns:1fr}.scheduleactions{justify-content:flex-start}.scheduleactions button{flex:1 1 auto}#schedule .panelhead{align-items:flex-start;flex-wrap:wrap}}
+
+.plannedcoverage{font-size:13px;margin:8px 0}

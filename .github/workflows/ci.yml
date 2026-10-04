@@ -1,7 +1,7 @@
 name: RosterLlama CI
 on:
   push:
-    branches: [main, reliability-staging, organized-workspace, incident-engine, staff-operations]
+    branches: [main, reliability-staging, organized-workspace, incident-engine, staff-operations, staff-scheduling]
   pull_request:
 jobs:
   test:
@@ -32,12 +32,14 @@ jobs:
       - run: node test-reliability.js
       - run: node test-incidents.js
       - run: node test-staffops.js
+      - run: node test-scheduling.js
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - run: node test-workspace-browser.js
       - run: node test-incidents-browser.js
       - run: node test-staffops-browser.js
+      - run: node test-scheduling-browser.js
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -46,6 +48,7 @@ jobs:
             workspace-*.png
             incident-*.png
             staffops-*.png
+            schedule-*.png
       - name: Syntax check browser clients
         run: |
           node --check public/app.js

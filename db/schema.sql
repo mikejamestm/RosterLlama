@@ -194,3 +194,20 @@ ALTER TABLE staff_shifts ALTER COLUMN started_at SET DEFAULT clock_timestamp();
 ALTER TABLE staff_breaks ALTER COLUMN started_at SET DEFAULT clock_timestamp();
 
 ALTER TABLE staff_shifts ADD COLUMN IF NOT EXISTS version integer NOT NULL DEFAULT 1;
+
+CREATE TABLE IF NOT EXISTS staff_assignments (
+ id text PRIMARY KEY,
+ organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+ staff_id text NOT NULL REFERENCES staff(id) ON DELETE RESTRICT,
+ session_id text NOT NULL REFERENCES sessions(id) ON DELETE RESTRICT,
+ start_at timestamptz NOT NULL,
+ end_at timestamptz NOT NULL,
+ status text NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled','cancelled')),
+ created_by text NOT NULL,
+ version integer NOT NULL DEFAULT 1,
+ created_at timestamptz NOT NULL DEFAULT now(),
+ updated_at timestamptz NOT NULL DEFAULT now(),
+ CHECK(end_at>start_at)
+);
+CREATE INDEX IF NOT EXISTS staff_assignments_org_session_start ON staff_assignments(organization_id,session_id,start_at) WHERE status='scheduled';
+CREATE INDEX IF NOT EXISTS staff_assignments_staff_start ON staff_assignments(organization_id,staff_id,start_at) WHERE status='scheduled';
