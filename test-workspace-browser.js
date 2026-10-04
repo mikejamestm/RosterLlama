@@ -24,13 +24,13 @@ try{
   await page.locator('#contextprogram').selectOption('program_0');
   assert.equal(await page.locator('#rostertable [data-transfer]').count(),2);
   await page.locator('#contextsession').selectOption('session_0_0');
-  assert.equal(await page.locator('#rostertable [data-transfer]').count(),1);
+  assert.equal(await page.locator('#rostertable [data-transfer]').count(),1);assert.equal(await page.locator('#contextdate').inputValue(),'2026-10-09');
   assert.match(await page.locator('#rostertable').textContent(),/Participant 0/);
   assert.doesNotMatch(await page.locator('#rostertable').textContent(),/Participant 2/);await page.screenshot({path:'workspace-roster-'+width+'.png',fullPage:true});
   await page.locator('[data-view="staffportal"]').click();
   assert.match(await page.locator('#staffheading').textContent(),/Bay Explorers/);
   assert.match(await page.locator('#staffsubtitle').textContent(),/October 9/);
-  await page.locator('#contextdate').fill('2099-10-09');
+  await page.locator('#contextdate').fill('2099-10-09');await page.locator('#contextdate').dispatchEvent('change');assert.match(await page.locator('#staffdatewarning').textContent(),/2099/);
   assert.equal(await page.locator('#staffroster .primary').count(),0,'Future view cannot create a current-date check-in');
   assert.match(await page.locator('#staffdatewarning').textContent(),/only for today/);
   await page.locator('#contextprogram').selectOption('program_1');
