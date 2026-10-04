@@ -19,14 +19,14 @@ try{
    if(req.method()==='POST'&&path.startsWith('/api/attendance/'))writes.push(req.postDataJSON());
    await route.fulfill({json:path==='/api/me'?{organization,owner:{name:'Owner'},role:'owner'}:path==='/api/dashboard'?data:path==='/api/billing/subscription'?{configured:false}: {}});
   });
-  await page.goto(base+'/app#roster');await page.locator('#contextprogram option').nth(20).waitFor({state:'attached'});
+  await page.route('**/health',route=>route.fulfill({json:{ok:true}}));await page.goto(base+'/app#roster');await page.locator('#contextprogram option').nth(20).waitFor({state:'attached'});
   assert.equal(await page.locator('#rostertable [data-transfer]').count(),0,'Roster must require a program selection');
   await page.locator('#contextprogram').selectOption('program_0');
   assert.equal(await page.locator('#rostertable [data-transfer]').count(),2);
   await page.locator('#contextsession').selectOption('session_0_0');
   assert.equal(await page.locator('#rostertable [data-transfer]').count(),1);
   assert.match(await page.locator('#rostertable').textContent(),/Participant 0/);
-  assert.doesNotMatch(await page.locator('#rostertable').textContent(),/Participant 2/);
+  assert.doesNotMatch(await page.locator('#rostertable').textContent(),/Participant 2/);await page.screenshot({path:'workspace-roster-'+width+'.png',fullPage:true});
   await page.locator('[data-view="staffportal"]').click();
   assert.match(await page.locator('#staffheading').textContent(),/Bay Explorers/);
   assert.match(await page.locator('#staffsubtitle').textContent(),/October 9/);
@@ -37,7 +37,7 @@ try{
   assert.equal(await page.locator('#staffroster .staffkid').count(),0,'Changing programs requires choosing the corresponding session');
   await page.locator('#contextsession').selectOption('session_1_1');
   assert.match(await page.locator('#staffroster').textContent(),/Participant 3/);
-  assert.doesNotMatch(await page.locator('#staffroster').textContent(),/Participant 0/);
+  assert.doesNotMatch(await page.locator('#staffroster').textContent(),/Participant 0/);await page.screenshot({path:'workspace-staff-'+width+'.png',fullPage:true});
   await page.locator('[data-view="families"]').click();
   assert.equal(await page.locator('.familyinvite').count(),1);
   await page.reload();await page.waitForFunction(()=>document.querySelector('#contextsession').value==='session_1_1');
@@ -45,7 +45,7 @@ try{
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No horizontal page overflow');
   if(width<900){const height=await page.locator('aside').evaluate(e=>e.getBoundingClientRect().height);assert(height<100,'Mobile navigation must not cover several rows of content')}
   assert.equal(await page.locator('nav .build-dashboard').getAttribute('href'),'/control.html');
-  assert.deepEqual(errors,[]);assert.equal(writes.length,0);await page.close();
+  assert.deepEqual(errors,[]);assert.equal(writes.length,0);await page.goto(base+'/control.html');await page.waitForFunction(()=>document.querySelector('#engines').textContent.includes('Medication administration'));assert.match(await page.locator('#engines').textContent(),/Not yet/);assert.match(await page.locator('#engines').textContent(),/NOT BUILT/);await page.screenshot({path:'workspace-progress-'+width+'.png',fullPage:true});assert.deepEqual(errors,[]);await page.close();
  }
  console.log('Workspace browser tests passed: 20 programs, program/session isolation, date safety, persistence and mobile navigation');
 }finally{await browser?.close();server.kill()}

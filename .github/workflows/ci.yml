@@ -34,6 +34,11 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - run: node test-workspace-browser.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: workspace-screenshots
+          path: workspace-*.png
       - name: Syntax check browser clients
         run: |
           node --check public/app.js
